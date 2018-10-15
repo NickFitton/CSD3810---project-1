@@ -6,7 +6,7 @@ boolean holdDown = false;
 boolean holdLeft = false;
 
 color black = color(0, 0, 0);
-
+      
 Player player;
 
 void setup() {
