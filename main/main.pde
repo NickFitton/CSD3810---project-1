@@ -2,15 +2,10 @@ import TUIO.*; //<>// //<>//
 
 TuioProcessing tuioClient;
 HashMap<Integer, Element> objects = new HashMap<Integer, Element>();
-Ball[] balls = new Ball[2];
 
 void setup() {
   size(900, 900);
   background(50);
-
-  for (int i=0; i< balls.length; i++) {
-    balls[i] = new Ball();
-  }
   tuioClient = new TuioProcessing(this);
 }
 
@@ -18,15 +13,6 @@ void draw() {
   background(50);
   for (Element e : objects.values()) {
     e.drawElement();
-    for (Ball ball : balls) {
-      if (ball.isColliding(e)) {
-        ball.collideWith(e);
-      }
-    }
-  }
-  for (Ball b : balls) {
-    b.moveElement();
-    b.drawElement();
   }
 }
 
