@@ -43,6 +43,15 @@ void removeTuioObject(TuioObject object) {
   }
 }
 
+void refresh(TuioTime bundleTime) {}
+void addTuioCursor(TuioCursor tcur) {}
+void removeTuioCursor(TuioCursor tcur) {}
+void updateTuioCursor(TuioCursor tcur) {}
+void addTuioBlob(TuioBlob tblb) {}
+void removeTuioBlob(TuioBlob tblb) {}
+void updateTuioBlob(TuioBlob tblb) {}
+
+
 PVector tuioObjectPosition(TuioObject object) {
   return new PVector(object.getScreenX(width), object.getScreenY(height));
 }
