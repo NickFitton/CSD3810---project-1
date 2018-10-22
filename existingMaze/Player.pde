@@ -34,14 +34,22 @@ class Player {
   }
 
   void collide(PImage path) {
-    println(position, previousPosition);
-    boolean touchUp = path.get(floor(player.position.x), floor(player.position.y)) == black;
-    boolean touchRight = path.get(floor(player.position.x + player.size.x), floor(player.position.y)) == black; 
-    boolean touchDown = path.get(floor(player.position.x + player.size.x), floor(player.position.y + player.size.y)) == black; 
-    boolean touchLeft = path.get(floor(player.position.x), floor(player.position.y + player.size.y)) == black; 
+    boolean touchUp = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black;
+    boolean touchRight = path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black; 
+    boolean touchDown = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black; 
+    boolean touchLeft = path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black; 
 
-    if (touchUp || touchRight || touchDown || touchLeft ) {
-      position = previousPosition;
+    print(touchUp);
+    print(touchRight);
+    print(touchDown);
+    print(touchLeft);
+    println();
+
+    if (touchRight || touchLeft ) {
+      position.x = previousPosition.x;
+    }
+    if (touchUp || touchDown ) {
+      position.y = previousPosition.y;
     }
   }
 }

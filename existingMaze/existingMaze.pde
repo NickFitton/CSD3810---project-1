@@ -10,6 +10,7 @@ color black = color(0, 0, 0);
 Player player;
 
 void setup() {
+  frameRate(120);
   size(642, 663);
   path = loadImage("path.png");
   player = new Player(new PVector(5, 5));
