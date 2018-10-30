@@ -17,6 +17,42 @@ class Player {
     rect(position.x, position.y, size.x, size.y);
   }
 
+  void moveUp() {
+    previousPosition = position.copy();
+    player.position.y = player.position.y - player.speed;
+
+    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
+      position.y = previousPosition.y;
+    }
+  }
+
+  void moveDown() {
+    previousPosition = position.copy();
+    player.position.y = player.position.y + player.speed;
+
+    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
+      position.y = previousPosition.y;
+    }
+  }
+
+  void moveLeft() {
+    previousPosition = position.copy();
+    player.position.x = player.position.x - player.speed;
+
+    if (path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
+  }
+
+  void moveRight() {
+    previousPosition = position.copy();
+    player.position.x = player.position.x + player.speed;
+
+    if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
+  }
+
   void move() {
     previousPosition = position.copy();
     if (holdUp) {
