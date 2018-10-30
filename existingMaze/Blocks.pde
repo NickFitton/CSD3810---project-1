@@ -3,8 +3,15 @@ abstract class Block {
 }
 
 class DevBlock extends Block {
+  Query query;
+  DevBlock(String actionName, Query query) {
+    this.actionName = actionName;
+    this.query = query;
+  }
+  
   DevBlock(String actionName) {
     this.actionName = actionName;
+    this.query = null;
   }
 }
 
