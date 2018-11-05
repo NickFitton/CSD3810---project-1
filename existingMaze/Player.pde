@@ -1,12 +1,15 @@
 class Player {
   PVector position;
   PVector previousPosition;
+  ArrayList<PVector> positionHistory;
   PVector size = new PVector(5, 5);
   int speed = 1;
 
   Player(PVector position) {
     this.position = position;
     this.previousPosition = position;
+    
+   this.positionHistory = new ArrayList<PVector>();
   }
 
   void draw() {
@@ -50,6 +53,14 @@ class Player {
 
     if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
       position.x = previousPosition.x;
+    }
+  }
+  
+  void addToHistory(PVector position) {
+    positionHistory.add(position);
+    
+    while (positionHistory.size() > 20) {
+      positionHistory.remove(positionHistory.size()-1);
     }
   }
 

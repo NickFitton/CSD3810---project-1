@@ -4,7 +4,7 @@ PImage path;
 CONFIG PARAMETERS
  */
 boolean loopActions = false; // If true, loops back to the first action in the queue once queue is complete
-int speed = 2; // If 1, goes slowly, if 2 completes an action every frame, if 3 completes all actions in first frame, default is to act as 1
+int speed = 1; // If 1, goes slowly, if 2 completes an action every frame, if 3 completes all actions in first frame, default is to act as 1
 int actionStepLength = 16; // Dictates the stride of the entity, the smaller the number, the less it moves per action
 
 
@@ -16,14 +16,20 @@ boolean holdRight = false;
 boolean holdDown = false;
 boolean holdLeft = false;
 
+boolean playing = false;
+
 color black = color(0, 0, 0);
+PShape pauseShape;
+PShape arrow;
+PShape greenArrow;
 
 Player player;
 Actions actions;
 
 void setup() {
+  smooth();
   frameRate(120);
-  size(642, 663);
+  size(800, 663);
   path = loadImage("path.png");
   player = new Player(new PVector(325, 630));
   actions = new Actions();
@@ -37,23 +43,98 @@ void setup() {
   catch (IOException e) {
     println("Given movement was not valid");
   }
+
+
+  pauseShape = createShape();
+  pauseShape.beginShape();
+  pauseShape.fill(0, 255, 0);
+  pauseShape.noStroke();
+  pauseShape.vertex(0, 0);
+  pauseShape.vertex(20, 12.5);
+  pauseShape.vertex(0, 25);
+  pauseShape.endShape(CLOSE);
+
+  arrow = createShape();
+  arrow.beginShape();
+  arrow.fill(0);
+  arrow.noStroke();
+  arrow.vertex(0, 7);
+  arrow.vertex(8, 7);
+  arrow.vertex(8, 0);
+  arrow.vertex(20, 10);
+  arrow.vertex(8, 20);
+  arrow.vertex(8, 13);
+  arrow.vertex(0, 13);
+  arrow.endShape(CLOSE);
+
+  greenArrow = createShape();
+  greenArrow.beginShape();
+  greenArrow.fill(0, 255, 0);
+  greenArrow.noStroke();
+  greenArrow.vertex(0, 7);
+  greenArrow.vertex(8, 7);
+  greenArrow.vertex(8, 0);
+  greenArrow.vertex(20, 10);
+  greenArrow.vertex(8, 20);
+  greenArrow.vertex(8, 13);
+  greenArrow.vertex(0, 13);
+  greenArrow.endShape(CLOSE);
 }
 
 
 void draw() {
-  background(255);
+  background(230);
   noStroke();
   fill(230);
-  rect(0, 642, width, 21);
   fill(0, 255, 0);
   rect(308, 642, 42, 21);
   image(path, 0, 0);
 
-  actions.executeAction();
+  if (playing) {
+    actions.executeAction();
+  }
   player.draw();
-  //player.move();
-  //player.collide(path);
-  //player.draw();
+
+  drawActions();
+}
+
+void drawActions() {
+  pushMatrix();
+  translate(660, 20);
+  if (playing) {
+    noStroke();
+    fill(0, 255, 0);
+    rect(-8.5, -12.5, 7, 25);
+    rect(4.5, -12.5, 7, 25);
+  } else {
+    shape(pauseShape, 0, 0);
+  }
+  translate(0, 35);
+  shapeMode(CENTER);
+  for (int i=0; i<actions.actions.length; i++) {
+    pushMatrix();
+    switch(actions.actions[i]) {
+    case "up":
+      rotate(TWO_PI*0.75);
+      break;
+    case "down":
+      rotate(TWO_PI*0.25);
+      break;
+    case "left":
+      rotate(TWO_PI*0.5);
+      break;
+    default:
+    }
+
+    if (actions.currentAction == i) {
+      shape(greenArrow, 0, 0);
+    } else {
+      shape(arrow, 0, 0);
+    }
+    popMatrix();
+    translate(0, 25);
+  }
+  popMatrix();
 }
 
 void keyPressed() {
@@ -92,6 +173,9 @@ void keyPressed() {
     catch (IOException e) {
       println("Added movement was not valid");
     }
+  }
+  if (key == ' ') {
+    playing = !playing;
   }
 
   if (key == 'p') {
