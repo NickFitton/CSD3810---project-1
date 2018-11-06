@@ -5,7 +5,7 @@ CONFIG PARAMETERS
  */
 boolean loopActions = false; // If true, loops back to the first action in the queue once queue is complete
 int speed = 1; // If 1, goes slowly, if 2 completes an action every frame, if 3 completes all actions in first frame, default is to act as 1
-int actionStepLength = 16; // Dictates the stride of the entity, the smaller the number, the less it moves per action
+int stepCount = 16; // Dictates the stride of the entity, the smaller the number, the less it moves per action
 
 
 /*
@@ -16,15 +16,15 @@ boolean holdRight = false;
 boolean holdDown = false;
 boolean holdLeft = false;
 
-boolean playing = false;
+boolean playing = true;
 
 color black = color(0, 0, 0);
 PShape pauseShape;
 PShape arrow;
-PShape greenArrow;
 
-Player player;
+
 Actions actions;
+Player player;
 
 void setup() {
   smooth();
@@ -33,16 +33,17 @@ void setup() {
   path = loadImage("path.png");
   player = new Player(new PVector(325, 630));
   actions = new Actions();
-  try {
-    /* 
-     This string of actions moves the entity from the start to the exit
-     Comment this out of you want to control the entity initially
-     */
-    actions.addMovements("left", "up", "left", "up", "right", "right", "right", "up", "up", "right", "right", "right", "up", "up", "up", "right", "down", "right", "down", "left", "down", "down", "right", "down", "down", "down", "right", "up", "right", "down", "right", "up", "right", "down", "right", "up", "right", "up", "up", "right", "up", "right", "right", "up", "left", "left", "up", "up", "up", "up", "left", "down", "left", "left", "up", "right", "up", "right", "right", "up", "left", "up", "right", "up", "left", "up", "left", "down", "left", "left", "up", "left", "left", "down", "down", "left", "up", "up", "left", "down", "left", "up", "up", "right", "up", "right", "right", "right", "down", "right", "up", "up", "left", "up", "left", "down", "left", "left", "left", "down", "left", "down", "down", "down", "left", "up", "up", "up", "left", "up", "right", "right", "up", "up", "left", "down", "left", "left", "left", "up", "left", "left", "left", "up", "left", "left", "left", "down", "left", "up", "up", "left", "up", "up", "up", "right", "up", "left", "up", "up", "up", "right", "right", "up", "left", "up", "left", "up", "up", "right", "right", "up", "left", "left", "up", "right", "right", "right", "right", "up", "right", "up", "left", "left", "down", "left", "left", "up", "left", "left", "left", "left", "up", "right", "up", "up", "right", "right", "right", "down", "right", "right", "down", "right", "up", "right", "right", "right", "right", "right", "up", "left", "up");
-  } 
-  catch (IOException e) {
-    println("Given movement was not valid");
-  }
+
+  ForLoop loopB = new ForLoop(new Block[0], 2);
+  loopB.addBlock(new Left());
+  loopB.addBlock(new Up());
+
+  ForLoop loopA = new ForLoop(new Block[0], 2);
+  loopA.addBlock(new Up());
+  loopA.addBlock(loopB);
+
+  actions.addBlock(loopA);
+  actions.addBlock(new Up());
 
 
   pauseShape = createShape();
@@ -66,19 +67,8 @@ void setup() {
   arrow.vertex(8, 13);
   arrow.vertex(0, 13);
   arrow.endShape(CLOSE);
-
-  greenArrow = createShape();
-  greenArrow.beginShape();
-  greenArrow.fill(0, 255, 0);
-  greenArrow.noStroke();
-  greenArrow.vertex(0, 7);
-  greenArrow.vertex(8, 7);
-  greenArrow.vertex(8, 0);
-  greenArrow.vertex(20, 10);
-  greenArrow.vertex(8, 20);
-  greenArrow.vertex(8, 13);
-  greenArrow.vertex(0, 13);
-  greenArrow.endShape(CLOSE);
+  
+  //actions.printActions();
 }
 
 
@@ -91,11 +81,19 @@ void draw() {
   image(path, 0, 0);
 
   if (playing) {
-    actions.executeAction();
+
+    try {
+      actions.execute();
+    } 
+    catch (IOException e) {
+      noLoop();
+      println("[ERROR] Pointed at an invalid block");
+      println("[ERROR] Pointer at: ", actions.pointer.pointer);
+    }
   }
   player.draw();
 
-  drawActions();
+  actions.printActions(660, 20);
 }
 
 void drawActions() {
@@ -111,89 +109,99 @@ void drawActions() {
   }
   translate(0, 35);
   shapeMode(CENTER);
-  for (int i=0; i<actions.actions.length; i++) {
-    pushMatrix();
-    switch(actions.actions[i]) {
-    case "up":
-      rotate(TWO_PI*0.75);
-      break;
-    case "down":
-      rotate(TWO_PI*0.25);
-      break;
-    case "left":
-      rotate(TWO_PI*0.5);
-      break;
-    default:
-    }
-
-    if (actions.currentAction == i) {
-      shape(greenArrow, 0, 0);
-    } else {
-      shape(arrow, 0, 0);
-    }
-    popMatrix();
-    translate(0, 25);
-  }
+  ellipseMode(CENTER);
+  drawBlocks(actions.blocks);
   popMatrix();
 }
 
-void keyPressed() {
-  if (keyCode == UP && holdUp == false) {
-    holdUp = true;
-    try {
-      actions.addMovement("up");
-    } 
-    catch (IOException e) {
-      println("Added movement was not valid");
+void drawBlocks(Block[] blocks) {
+  for (Block block: blocks) {
+    translate(0, 20);
+    switch(block.action) {
+    case "up":
+      rotate(TWO_PI*0.75);
+      shape(arrow, 0, 0);
+      break;
+    case "down":
+      rotate(TWO_PI*0.25);
+      shape(arrow, 0, 0);
+      break;
+    case "left":
+      rotate(TWO_PI*0.5);
+      shape(arrow, 0, 0);
+      break;
+      case "for":
+      ellipse(0,0,20,20);
+      translate(20,0);
+      try {
+        drawBlocks(block.getSubBlocks()); 
+      } catch (IOException e) {
+        println("[ERROR]: Given for loop did not have sub blocks");
+      }
+      translate(-20, 0);
+      break;
+    default:
     }
-  }
-  if (keyCode == RIGHT && holdRight == false) {
-    holdRight = true;
-    try {
-      actions.addMovement("right");
-    } 
-    catch (IOException e) {
-      println("Added movement was not valid");
-    }
-  }
-  if (keyCode == DOWN && holdDown == false) {
-    holdDown = true;
-    try {
-      actions.addMovement("down");
-    } 
-    catch (IOException e) {
-      println("Added movement was not valid");
-    }
-  }
-  if (keyCode == LEFT && holdLeft == false) {
-    holdLeft = true;
-    try {
-      actions.addMovement("left");
-    } 
-    catch (IOException e) {
-      println("Added movement was not valid");
-    }
-  }
-  if (key == ' ') {
-    playing = !playing;
-  }
-
-  if (key == 'p') {
-    actions.printActions();
   }
 }
 
-void keyReleased() {
-  if (keyCode == UP) {
-    holdUp = false;
-  }
-  if (keyCode == RIGHT) {
-    holdRight = false;
-  }
-  if (keyCode == DOWN) {
-    holdDown = false;
-  }
-  if (keyCode == LEFT) {
-    holdLeft = false;
-  }
-}
+//void keyPressed() {
+//  if (keyCode == UP && holdUp == false) {
+//    holdUp = true;
+//    try {
+//      actions.addMovement("up");
+//    } 
+//    catch (IOException e) {
+//      println("Added movement was not valid");
+//    }
+//  }
+//  if (keyCode == RIGHT && holdRight == false) {
+//    holdRight = true;
+//    try {
+//      actions.addMovement("right");
+//    } 
+//    catch (IOException e) {
+//      println("Added movement was not valid");
+//    }
+//  }
+//  if (keyCode == DOWN && holdDown == false) {
+//    holdDown = true;
+//    try {
+//      actions.addMovement("down");
+//    } 
+//    catch (IOException e) {
+//      println("Added movement was not valid");
+//    }
+//  }
+//  if (keyCode == LEFT && holdLeft == false) {
+//    holdLeft = true;
+//    try {
+//      actions.addMovement("left");
+//    } 
+//    catch (IOException e) {
+//      println("Added movement was not valid");
+//    }
+//  }
+//  if (key == ' ') {
+//    playing = !playing;
+//  }
+
+//  if (key == 'p') {
+//    actions.printActions();
+//  }
+//}
+
+//void keyReleased() {
+//  if (keyCode == UP) {
+//    holdUp = false;
+//  }
+//  if (keyCode == RIGHT) {
+//    holdRight = false;
+//  }
+//  if (keyCode == DOWN) {
+//    holdDown = false;
+//  }
+//  if (keyCode == LEFT) {
+//    holdLeft = false;
+//  }
+//}

@@ -1,15 +1,49 @@
 class Player {
   PVector position;
   PVector previousPosition;
-  ArrayList<PVector> positionHistory;
   PVector size = new PVector(5, 5);
-  int speed = 1;
+  int scale;
 
   Player(PVector position) {
     this.position = position;
-    this.previousPosition = position;
-    
-   this.positionHistory = new ArrayList<PVector>();
+    previousPosition = position;
+    scale = 1;
+  }
+
+  void move() {
+    previousPosition = position.copy();
+  }
+
+  void moveUp() {
+    move();
+    position.add(new PVector(0, -scale));
+    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
+      position.y = previousPosition.y;
+    }
+  }
+
+  void moveDown() {
+    move();
+    position.add(new PVector(0, scale));
+    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
+      position.y = previousPosition.y;
+    }
+  }
+
+  void moveLeft() {
+    move();
+    position.add(new PVector(-scale, 0));
+    if (path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
+  }
+
+  void moveRight() {
+    move();
+    position.add(new PVector(scale, 0));
+    if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
   }
 
   void draw() {
@@ -18,85 +52,5 @@ class Player {
     stroke(0);
     fill(255);
     rect(position.x, position.y, size.x, size.y);
-  }
-
-  void moveUp() {
-    previousPosition = position.copy();
-    player.position.y = player.position.y - player.speed;
-
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
-      position.y = previousPosition.y;
-    }
-  }
-
-  void moveDown() {
-    previousPosition = position.copy();
-    player.position.y = player.position.y + player.speed;
-
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
-      position.y = previousPosition.y;
-    }
-  }
-
-  void moveLeft() {
-    previousPosition = position.copy();
-    player.position.x = player.position.x - player.speed;
-
-    if (path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
-      position.x = previousPosition.x;
-    }
-  }
-
-  void moveRight() {
-    previousPosition = position.copy();
-    player.position.x = player.position.x + player.speed;
-
-    if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
-      position.x = previousPosition.x;
-    }
-  }
-  
-  void addToHistory(PVector position) {
-    positionHistory.add(position);
-    
-    while (positionHistory.size() > 20) {
-      positionHistory.remove(positionHistory.size()-1);
-    }
-  }
-
-  void move() {
-    previousPosition = position.copy();
-    if (holdUp) {
-      player.position.y = player.position.y - player.speed;
-    }
-    if (holdRight) {
-      player.position.x = player.position.x + player.speed;
-    }
-    if (holdDown) {
-      player.position.y = player.position.y + player.speed;
-    }
-    if (holdLeft) {
-      player.position.x = player.position.x - player.speed;
-    }
-  }
-
-  void collide(PImage path) {
-    boolean touchUp = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black;
-    boolean touchRight = path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black; 
-    boolean touchDown = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black; 
-    boolean touchLeft = path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black; 
-
-    print(touchUp);
-    print(touchRight);
-    print(touchDown);
-    print(touchLeft);
-    println();
-
-    if (touchRight || touchLeft ) {
-      position.x = previousPosition.x;
-    }
-    if (touchUp || touchDown ) {
-      position.y = previousPosition.y;
-    }
   }
 }

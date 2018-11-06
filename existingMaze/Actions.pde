@@ -1,93 +1,72 @@
 class Actions {
-  String[] actions;
-  int currentAction;
-  int actionSteps;
+  Block[] blocks;
+  Pointer pointer;
+
+  PVector printScale;
 
   Actions() {
-    actions = new String[0];
-    currentAction = 0;
-    actionSteps = 0;
+    pointer = new Pointer();
+    blocks = new Block[0];
+
+    printScale = new PVector(10, 15);
   }
 
-  void executeAction() {
-    switch (speed) {
-    case 2:
-      if (actions.length > currentAction) {
-        for (int i=0; i<actionStepLength; i++) {
-          move(actions[currentAction]);
+  void addBlock(Block block) {
+    blocks = (Block[]) append(blocks, block);
+  }
+
+  void printActions(int x, int y) {
+    translate(x, y);
+    fill(0);
+    stroke(0);
+    pushMatrix();
+    printBlocks(blocks, 0);
+    popMatrix();
+  }
+
+  void printBlocks(Block[] givenBlocks, int indentation) {
+    for (Block block : givenBlocks) {
+      //printIndent(indentation);
+      //println(block.action);
+      text(block.action, 20, 20);
+      translate(0, printScale.y);
+      if (block instanceof Iterable) {
+        Iterable iterable = (Iterable) block;
+        translate(printScale.x, 0);
+        printBlocks(iterable.getSubBlocks(), indentation+1);
+        translate(-printScale.x, 0);
+      }
+    }
+  }
+
+  void printIndent(int indentation) {
+    if (indentation > 0) {
+      print(" ");
+      printIndent(indentation - 1);
+    }
+  }
+
+  void execute() throws IOException {
+    try {
+      Block currentBlock = pointer.point(blocks);
+      boolean state = currentBlock.execute();
+      if (currentBlock instanceof Iterable) {
+        if (!state) {
+          pointer.indent();
+        } else {
+          pointer.increment();
         }
-        currentAction++;
+      } else if (state) {
+        pointer.increment();
       }
-      break;
-    case 3:
-      for (String action : actions) {
-        for (int i=0; i<actionStepLength; i++) {
-          move(action);
-        }
-      }
-      currentAction = actions.length;
-      break;
-    default:
-    case 1:
-      if (actions.length <= currentAction && loopActions) {
-        currentAction = 0;
-      } else if (actions.length > currentAction) {
-        move(actions[currentAction]);
-        actionSteps++;
-        if (actionSteps >= actionStepLength) {
-          actionSteps = 0;
-          currentAction++;
-        }
-      }
-      break;
-    }
-  }
-
-  void move(String direction) {
-    switch (direction) {
-    case "up":
-      player.moveUp();
-      break;
-    case "down":
-      player.moveDown();
-      break;
-    case "left":
-      player.moveLeft();
-      break;
-    case "right":
-      player.moveRight();
-      break;
-    }
-  }
-
-  void addMovement(String direction) throws IOException {
-    if (validMovement(direction)) {
-      actions = append(actions, direction);
-    } else {
-      throw new IOException("Given movement '" + direction + "' is not valid");
-    }
-  }
-
-  void addMovements(String... directions) throws IOException {
-    for (String direction : directions) {
-      addMovement(direction);
-    }
-  }
-
-  void printActions() {
-    for (String action : actions) {
-      print("\"" + action + "\", ");
-    }
-    println();
-  }
-
-  boolean validMovement(String direction) {
-    String[] validDirections = {"up", "down", "left", "right"};
-    for (String valid : validDirections) {
-      if (valid.equals(direction)) {
-        return true;
+    } 
+    catch (ArrayIndexOutOfBoundsException e) {
+      if (pointer.pointer.length > 1) {
+        pointer.outdent();
+      } else {
+        println("Reached end of action list");
+        noLoop();
       }
     }
-    return false;
   }
-}  
+}
