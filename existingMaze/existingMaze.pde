@@ -44,31 +44,6 @@ void setup() {
 
   actions.addBlock(loopA);
   actions.addBlock(new Up());
-
-
-  pauseShape = createShape();
-  pauseShape.beginShape();
-  pauseShape.fill(0, 255, 0);
-  pauseShape.noStroke();
-  pauseShape.vertex(0, 0);
-  pauseShape.vertex(20, 12.5);
-  pauseShape.vertex(0, 25);
-  pauseShape.endShape(CLOSE);
-
-  arrow = createShape();
-  arrow.beginShape();
-  arrow.fill(0);
-  arrow.noStroke();
-  arrow.vertex(0, 7);
-  arrow.vertex(8, 7);
-  arrow.vertex(8, 0);
-  arrow.vertex(20, 10);
-  arrow.vertex(8, 20);
-  arrow.vertex(8, 13);
-  arrow.vertex(0, 13);
-  arrow.endShape(CLOSE);
-  
-  //actions.printActions();
 }
 
 
@@ -144,64 +119,3 @@ void drawBlocks(Block[] blocks) {
     }
   }
 }
-
-//void keyPressed() {
-//  if (keyCode == UP && holdUp == false) {
-//    holdUp = true;
-//    try {
-//      actions.addMovement("up");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == RIGHT && holdRight == false) {
-//    holdRight = true;
-//    try {
-//      actions.addMovement("right");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == DOWN && holdDown == false) {
-//    holdDown = true;
-//    try {
-//      actions.addMovement("down");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == LEFT && holdLeft == false) {
-//    holdLeft = true;
-//    try {
-//      actions.addMovement("left");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (key == ' ') {
-//    playing = !playing;
-//  }
-
-//  if (key == 'p') {
-//    actions.printActions();
-//  }
-//}
-
-//void keyReleased() {
-//  if (keyCode == UP) {
-//    holdUp = false;
-//  }
-//  if (keyCode == RIGHT) {
-//    holdRight = false;
-//  }
-//  if (keyCode == DOWN) {
-//    holdDown = false;
-//  }
-//  if (keyCode == LEFT) {
-//    holdLeft = false;
-//  }
-//}

@@ -7,6 +7,7 @@ void setup() {
   size(900, 900);
   background(50);
   tuioClient = new TuioProcessing(this);
+  println(tuioClient);
 }
 
 void draw() {
