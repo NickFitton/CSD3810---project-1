@@ -5,8 +5,9 @@ CONFIG PARAMETERS
  */
 boolean loopActions = false; // If true, loops back to the first action in the queue once queue is complete
 int speed = 1; // If 1, goes slowly, if 2 completes an action every frame, if 3 completes all actions in first frame, default is to act as 1
-int stepCount = 16; // Dictates the stride of the entity, the smaller the number, the less it moves per action
-
+int stepCount = 15; // Dictates the stride of the entity, the smaller the number, the less it moves per action
+boolean collision = true;
+boolean showMaze = true;
 
 /*
 OTHER PARAMETERS
@@ -28,23 +29,39 @@ Player player;
 
 void setup() {
   smooth();
-  frameRate(120);
+  frameRate(10);
   size(800, 663);
   path = loadImage("path.png");
   player = new Player(new PVector(325, 630));
   actions = new Actions();
 
-  ForLoop loopB = new ForLoop(new Block[0], 2);
-  loopB.addBlock(new Left());
-  loopB.addBlock(new Up());
+  InfiniteLoop infLoop = new InfiniteLoop();
+  
+  IfElse elseIf = new IfElse();
+  elseIf.setQuery(new CanGoUp());
+  elseIf.addBlock(new Up());
+  elseIf.addElseBlock(new Left());
+  infLoop.addBlock(elseIf);
+  //infLoop.addBlock(new Left());
 
-  ForLoop loopA = new ForLoop(new Block[0], 2);
-  loopA.addBlock(new Up());
-  loopA.addBlock(loopB);
+  ////
+  //ForLoop loop2 = new ForLoop(2);
+  //loop2.addBlock(new Right());
+  //ForLoop otherLoop2 = new ForLoop(2);
+  //otherLoop2.addBlock(new Left());
+  //infLoop.addBlocks(new Up(), new Up(), loop2, new Down(), new Down(), otherLoop2);
+  //actions.addBlock(infLoop);
+  ////
 
-  actions.addBlock(loopA);
-  actions.addBlock(new Up());
+  ////
+  //If newIf = new If();
+  //infLoop.addBlock(newIf);
+  //newIf.setQuery(new CanGoUp());
+  //newIf.addBlock(new Up());
+  //infLoop.addBlock(new Left());
+  ////
 
+  actions.addBlock(infLoop);
 
   pauseShape = createShape();
   pauseShape.beginShape();
@@ -67,8 +84,6 @@ void setup() {
   arrow.vertex(8, 13);
   arrow.vertex(0, 13);
   arrow.endShape(CLOSE);
-  
-  //actions.printActions();
 }
 
 
@@ -78,10 +93,11 @@ void draw() {
   fill(230);
   fill(0, 255, 0);
   rect(308, 642, 42, 21);
-  image(path, 0, 0);
+  if (showMaze) {
+    image(path, 0, 0);
+  }
 
   if (playing) {
-
     try {
       actions.execute();
     } 
@@ -115,7 +131,7 @@ void drawActions() {
 }
 
 void drawBlocks(Block[] blocks) {
-  for (Block block: blocks) {
+  for (Block block : blocks) {
     translate(0, 20);
     switch(block.action) {
     case "up":
@@ -130,12 +146,13 @@ void drawBlocks(Block[] blocks) {
       rotate(TWO_PI*0.5);
       shape(arrow, 0, 0);
       break;
-      case "for":
-      ellipse(0,0,20,20);
-      translate(20,0);
+    case "for":
+      ellipse(0, 0, 20, 20);
+      translate(20, 0);
       try {
-        drawBlocks(block.getSubBlocks()); 
-      } catch (IOException e) {
+        drawBlocks(block.getSubBlocks());
+      } 
+      catch (IOException e) {
         println("[ERROR]: Given for loop did not have sub blocks");
       }
       translate(-20, 0);
@@ -144,64 +161,3 @@ void drawBlocks(Block[] blocks) {
     }
   }
 }
-
-//void keyPressed() {
-//  if (keyCode == UP && holdUp == false) {
-//    holdUp = true;
-//    try {
-//      actions.addMovement("up");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == RIGHT && holdRight == false) {
-//    holdRight = true;
-//    try {
-//      actions.addMovement("right");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == DOWN && holdDown == false) {
-//    holdDown = true;
-//    try {
-//      actions.addMovement("down");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (keyCode == LEFT && holdLeft == false) {
-//    holdLeft = true;
-//    try {
-//      actions.addMovement("left");
-//    } 
-//    catch (IOException e) {
-//      println("Added movement was not valid");
-//    }
-//  }
-//  if (key == ' ') {
-//    playing = !playing;
-//  }
-
-//  if (key == 'p') {
-//    actions.printActions();
-//  }
-//}
-
-//void keyReleased() {
-//  if (keyCode == UP) {
-//    holdUp = false;
-//  }
-//  if (keyCode == RIGHT) {
-//    holdRight = false;
-//  }
-//  if (keyCode == DOWN) {
-//    holdDown = false;
-//  }
-//  if (keyCode == LEFT) {
-//    holdLeft = false;
-//  }
-//}

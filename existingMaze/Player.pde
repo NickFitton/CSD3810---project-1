@@ -9,6 +9,10 @@ class Player {
     previousPosition = position;
     scale = 1;
   }
+  
+  Player copy() {
+    return new Player(this.position.copy());
+  }
 
   void move() {
     previousPosition = position.copy();
@@ -17,7 +21,7 @@ class Player {
   void moveUp() {
     move();
     position.add(new PVector(0, -scale));
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
+    if (collision && path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
       position.y = previousPosition.y;
     }
   }
@@ -25,7 +29,7 @@ class Player {
   void moveDown() {
     move();
     position.add(new PVector(0, scale));
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
+    if (collision && path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
       position.y = previousPosition.y;
     }
   }
@@ -33,7 +37,7 @@ class Player {
   void moveLeft() {
     move();
     position.add(new PVector(-scale, 0));
-    if (path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
+    if (collision && path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
       position.x = previousPosition.x;
     }
   }
@@ -41,16 +45,18 @@ class Player {
   void moveRight() {
     move();
     position.add(new PVector(scale, 0));
-    if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
+    if (collision && path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
       position.x = previousPosition.x;
     }
   }
 
   void draw() {
-    rectMode(CORNER);
     strokeWeight(1);
     stroke(0);
     fill(255);
     rect(position.x, position.y, size.x, size.y);
+    
+    fill(0,0,255);
+    noStroke();
   }
 }

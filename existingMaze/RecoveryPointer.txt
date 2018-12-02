@@ -6,11 +6,13 @@ class Pointer {
   }
 
   void increment() {
-    pointer[pointer.length - 1]++;
+    int updatedPointer = pointer[pointer.length - 1];
+    pointer[pointer.length - 1] = updatedPointer + 1;
   }
 
   void decrement() {
-    pointer[pointer.length - 1]--;
+    int updatedPointer = pointer[pointer.length - 1];
+    pointer[pointer.length - 1] = updatedPointer - 1;
   }
 
   void indent() {
@@ -19,26 +21,6 @@ class Pointer {
 
   void outdent() {
     pointer = shorten(pointer);
-  }
-  
-  int[] removeFirst(int[] list) {
-    return reverse(shorten(reverse(list)));
-  }
-  
-  boolean equals(int[] otherPointer) {
-    return pointerEquals(pointer, otherPointer);
-  }
-  
-  boolean pointerEquals(int[] pointer1, int[] pointer2) {
-    if (pointer1.length == 0 && pointer2.length == 0) {
-      return true;
-    } else if (pointer1.length == 0 || pointer2.length == 0) {
-      return false;
-    } else if (pointer1[0] == pointer2[0]) {
-      return pointerEquals(removeFirst(pointer1), removeFirst(pointer2));
-    } else {
-      return false;
-    }
   }
   
   void printPointer(int[] pointer) {
@@ -60,6 +42,7 @@ class Pointer {
       int[] newPointers = reverse(shorten(reverse(pointers)));
       return getBlock(foundBlock.getSubBlocks(), newPointers);
     } else {
+      println();
       return foundBlock;
     }
   }
