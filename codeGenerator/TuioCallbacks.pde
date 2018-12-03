@@ -6,13 +6,7 @@ void addTuioObject(TuioObject object) {
     getElement(sessionID).show();
   } else {
     Element newElement;
-    //switch (object.getSymbolID()) {
-    //case 0:
-    //  newElement = new StartElement(object);
-    //  break;
-    //default:
     newElement = new Element(object);
-    //}
     saveElement(sessionID, newElement);
   }
 }

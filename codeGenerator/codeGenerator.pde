@@ -1,4 +1,4 @@
-import TUIO.*; //<>// //<>//
+import TUIO.*; //<>//
 import java.util.Collection;
 import java.util.List;
 import java.util.LinkedList;
