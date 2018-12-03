@@ -36,7 +36,9 @@ void removeTuioObject(TuioObject object) {
 
   if (elementExists(sessionID)) {
     Element removedObj = getElement(sessionID);
-    println("Removing: " + removedObj);
+    if (codeTrain.contains(removedObj)) {
+      codeTrain.remove(removedObj);
+    }
     removedObj.hide();
   } else {
     println("Removing nonexistent object: [" + object.getSessionID() + "]");

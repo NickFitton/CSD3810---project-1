@@ -25,16 +25,15 @@ void draw() {
   background(50);
   pushMatrix();
   scale(scale.x, scale.y);
-  List<Element> elements = new LinkedList<Element>(objects.values());
   synchronized (objects) {
+    List<Element> elements = new LinkedList<Element>(objects.values());
     if (tuioUpdated) {
-      println("Update train");
       updateCodeTrain(elements);
       tuioUpdated = false;
     }
-  }
-  for (Element e : elements) {
-    e.drawElement();
+    for (Element e : elements) {
+      e.drawElement();
+    }
   }
   drawCodeTrain(codeTrain);
   popMatrix();
@@ -46,7 +45,6 @@ void updateCodeTrain(List<Element> elements) {
   if (firstElement.isPresent()) {
     codeTrain = generateTrain(firstElement.get(), new LinkedList(elements));
   } else {
-    println("Start block not found");
     codeTrain = new LinkedList();
   }
 }
@@ -64,8 +62,7 @@ List<Element> train(List<Element> elements, List<Element> train) {
     float dist = dist(end.position.x * scale.x, end.position.y * scale.y, e.position.x * scale.x, e.position.y * scale.y);
     if (dist < end.size + e.size) {
       float angle = atan2(e.position.y - end.position.y, e.position.x - end.position.x) + (PI*1.5);
-      println(angle, end.rotation);
-      if (anglesClose(angle, end.rotation, 0.5)) {
+      if (anglesClose(angle, end.rotation, e.rotation, 0.5)) {
         train.add(e);
         elements.remove(e);
         return train(elements, train);
@@ -75,15 +72,17 @@ List<Element> train(List<Element> elements, List<Element> train) {
   return train;
 }
 
-boolean anglesClose(float a, float b, float give) {
-  float diffA = abs(a-b);
-  float diffB = abs((a-TWO_PI)-b);
-  return (give > diffA || give > diffB);
+boolean anglesClose(float angle, float objA, float objB, float give) {
+  float diffA = abs(angle-objA);
+  float diffB = abs((angle-TWO_PI)-objA);
+  float diffObjA = abs(objA-objB);
+  float diffObjB = abs((objA-TWO_PI)-objB);
+  return ((give > diffA || give > diffB) && (diffObjA < give || diffObjB < give));
 }
 
 Optional<Element> getStartingElement(Collection<Element> elements) {
   for (Element e : elements) {
-    if (e.fedId == 0) {
+    if (e.fedId == 0 && e.visible) {
       return Optional.of(e);
     }
   }
