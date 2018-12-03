@@ -1,22 +1,24 @@
 void addTuioObject(TuioObject object) {
+  tuioUpdated = true;
   long sessionID = object.getSessionID();
 
   if (elementExists(sessionID)) {
     getElement(sessionID).show();
   } else {
     Element newElement;
-    switch (object.getSymbolID()) {
-    case 0:
-      newElement = new StartElement(object);
-      break;
-    default:
-      newElement = new Element(object);
-    }
+    //switch (object.getSymbolID()) {
+    //case 0:
+    //  newElement = new StartElement(object);
+    //  break;
+    //default:
+    newElement = new Element(object);
+    //}
     saveElement(sessionID, newElement);
   }
 }
 
 void updateTuioObject(TuioObject object) {
+  tuioUpdated = true;
   final long sessionID = object.getSessionID();
   if (elementExists(sessionID)) {
     Element e = getElement(sessionID);
@@ -29,6 +31,7 @@ void updateTuioObject(TuioObject object) {
 }
 
 void removeTuioObject(TuioObject object) {
+  tuioUpdated = true;
   long sessionID = object.getSessionID();
 
   if (elementExists(sessionID)) {

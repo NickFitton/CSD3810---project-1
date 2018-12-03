@@ -2,6 +2,7 @@ class Element {
   PVector position;
   PVector previousPosition;
   PVector velocity;
+  long fedId;
   float rotation;
   float size;
   color elementColor;
@@ -23,6 +24,7 @@ class Element {
     velocity = new PVector(0, 0);
     elementColor = color(random(50, 205), random(50, 205), random(50, 205));
     previousPosition = position;
+    fedId = object.getSymbolID();
     size = 90;
     visible = true;
   }
@@ -35,12 +37,16 @@ class Element {
 
   void drawElement() {
     if (visible) {
+      noStroke();
       rectMode(CENTER);
       pushMatrix();
-      translate(position.x * scale.x, position.y * scale.y);
+      translate(position.x, position.y);
       rotate(rotation);
       fill(elementColor);
       rect(0, 0, size, size);
+      line(0, 0, 0, -(size/2));
+      fill(0);
+      ellipse(0, 0, 5, 5);
       popMatrix();
     }
   }

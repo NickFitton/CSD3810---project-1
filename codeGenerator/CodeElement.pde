@@ -18,7 +18,8 @@ class StartElement extends Element {
     if (visible) {
       rectMode(CENTER);
       pushMatrix();
-      translate(position.x * scale.x, position.y * scale.y);
+      //translate(position.x * scale.x, position.y * scale.y);
+      translate(position.x, position.y);
       rotate(rotation);
       shape(shape, 0, 0);
       popMatrix();
