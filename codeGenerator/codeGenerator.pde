@@ -16,25 +16,23 @@ void setup() {
   background(50);
 
   scale = new PVector(1.32, 1);
+  scale(scale.x, scale.y);
   tuioClient = new TuioProcessing(this);
 }
 
 void draw() {
-  background(50);
-  pushMatrix();
-  scale(scale.x, scale.y);
   synchronized (objects) {
     List<Element> elements = new LinkedList<Element>(objects.values());
     if (tuioUpdated) {
-      updateCodeTrain(elements);
+      background(50);
+      updateCodeTrain(new LinkedList(elements));
       tuioUpdated = false;
-    }
-    for (Element e : elements) {
-      e.drawElement();
+      for (Element e : elements) {
+        e.drawElement();
+      }
+      drawCodeTrain(codeTrain);
     }
   }
-  drawCodeTrain(codeTrain);
-  popMatrix();
 }
 
 PVector tuioObjectPosition(TuioObject object) {

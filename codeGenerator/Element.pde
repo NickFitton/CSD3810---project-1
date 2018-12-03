@@ -58,8 +58,4 @@ class Element {
   void hide() {
     visible = false;
   }
-
-  PVector getVelocity() {
-    return position.sub(previousPosition);
-  }
 }
