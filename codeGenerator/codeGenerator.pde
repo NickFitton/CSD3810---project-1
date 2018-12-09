@@ -12,7 +12,7 @@ boolean tuioUpdated = false;
 PVector scale;
 
 void setup() {
-  size(900, 900, P2D);
+  size(900, 900);
   background(50);
 
   scale = new PVector(1.32, 1);

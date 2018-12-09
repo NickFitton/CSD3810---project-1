@@ -7,6 +7,7 @@ class Element {
   float size;
   color elementColor;
   boolean visible;
+  int indent;
 
   Element() {
     this.position = new PVector(width/2, height/2);
@@ -16,6 +17,7 @@ class Element {
     previousPosition = position;
     size = 90;
     visible = true;
+    indent = 0;
   }
 
   Element(TuioObject object) {
