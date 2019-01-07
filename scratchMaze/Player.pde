@@ -3,10 +3,12 @@ class Player {
   PVector previousPosition;
   PVector size = new PVector(5, 5);
   int scale;
+  LinkedList<PVector> previousPositions;
 
   Player(PVector position) {
     this.position = position;
     previousPosition = position;
+    previousPositions = new LinkedList();
     scale = 1;
   }
 
@@ -16,46 +18,51 @@ class Player {
 
   void move() {
     previousPosition = position.copy();
+    previousPositions.add(position.copy());
+  }
+  
+  int getPositionX() {
+    return floor(player.position.x - imagePosition.x);
+  }
+  
+  int getPositionY() {
+    return floor(player.position.y - imagePosition.y);
   }
 
   void moveUp() {
-    //synchronized (position) {
-      move();
-      position.add(new PVector(0, -scale));
-      if (collision && path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black) {
-        position.y = previousPosition.y;
-      }
-    //}
+    move();
+    position.add(new PVector(0, -scale));
+    if (collision && path.get(floor(getPositionX() + (player.size.x/2)), getPositionY()) == black) {
+      position.y = previousPosition.y;
+    }
+    if (previousPositions.size() > 10) {
+      println("removing");
+      previousPositions.remove(0);
+    }
   }
 
   void moveDown() {
-    //synchronized (position) {
-      move();
-      position.add(new PVector(0, scale));
-      if (collision && path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black) {
-        position.y = previousPosition.y;
-      }
-    //}
+    move();
+    position.add(new PVector(0, scale));
+    if (collision && path.get(floor(getPositionX() + (player.size.x/2)), floor(getPositionY() + player.size.y)) == black) {
+      position.y = previousPosition.y;
+    }
   }
 
   void moveLeft() {
-    //synchronized (position) {
-      move();
-      position.add(new PVector(-scale, 0));
-      if (collision && path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black) {
-        position.x = previousPosition.x;
-      }
-    //}
+    move();
+    position.add(new PVector(-scale, 0));
+    if (collision && path.get(getPositionX(), floor(getPositionY() + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
   }
 
   void moveRight() {
-    //synchronized (position) {
-      move();
-      position.add(new PVector(scale, 0));
-      if (collision && path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black) {
-        position.x = previousPosition.x;
-      }
-    //}
+    move();
+    position.add(new PVector(scale, 0));
+    if (collision && path.get(floor(getPositionX() + player.size.x), floor(getPositionY() + (player.size.y/2))) == black) {
+      position.x = previousPosition.x;
+    }
   }
 
   void collide(PImage path) {
@@ -73,9 +80,8 @@ class Player {
   }
 
   void draw() {
-    strokeWeight(1);
-    stroke(0);
-    fill(255);
+    noStroke();
+    fill(238, 130, 238);
     rectMode(CORNER);
     rect(position.x, position.y, size.x, size.y);
   }

@@ -38,6 +38,8 @@ Block createBlock(TuioObject obj) {
     return new CanGoLeft(obj);
   case 12:
     return new CanGoRight(obj);
+  case 16:
+    return new TriggerBlock(obj);
   default:
     return new Up(obj);
   }

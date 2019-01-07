@@ -13,24 +13,23 @@ ResetButton resetButton;
 
 void setup() {
   textAlign(CENTER, CENTER);
-  size(800, 663);
+  size(1560, 1000);
+  //size(800, 450);
   smooth();
   frameRate(60);
-  path = loadImage("path.png");
-  player = new Player(new PVector(5, 5));
+  path = loadImage("newPath.png");
+  player = new Player(new PVector(5 + imagePosition.x, 5 + imagePosition.y));
 
   actions = new Actions();
   tuioClient = new TuioProcessing(this);
-  playPauseButton = new PlayPauseButton(new PVector(width-125, height-75), 50);
-  resetButton = new ResetButton(new PVector(width-50, height-75), 50);
+  playPauseButton = new PlayPauseButton(new PVector(width-100, 100), 100);
+  resetButton = new ResetButton(new PVector(width-100, height-100), 100);
   background(50);
 }
 
 void draw() {
   List<Block> currentBlocks = new LinkedList<Block>(blocks.values());
   if (tuioUpdated) {
-    background(50);
-
     updateCodeTrain(new LinkedList(currentBlocks));
     tuioUpdated = false;
     actions.update(codeTrain);
@@ -51,14 +50,49 @@ void draw() {
     b.drawBlock();
   }
   drawCodeTrain(codeTrain);
-  actions.printActions(width - 150, 25);
-  player.collide(path);
-  player.draw();
+  //actions.printActions(width - 150, 25);
+  drawPlayer();
   drawButtons();
 
-  for (Cursor c: cursors.values()) {
+  for (Cursor c : cursors.values()) {
     c.draw();
   }
+  
+  Optional<TriggerBlock> b = getTriggerBlock();
+  if (b.isPresent()) {
+    TriggerBlock trigger = b.get();
+
+    if (playPauseButton.inButton(trigger.position)) {
+      println("In button");
+      playPauseButton.setPlaying(true);
+    } else {
+      println("Not in button");
+      playPauseButton.setPlaying(false);
+    }
+    if (resetButton.inButton(trigger.position)) {
+      println("Resetting");
+      resetButton.pressed();
+    }
+  }
+}
+  
+Optional<TriggerBlock> getTriggerBlock() {
+  for (Block b: blocks.values()) {
+    if (b instanceof TriggerBlock) {
+      return Optional.of((TriggerBlock) b);
+    }
+  }
+  return Optional.empty();
+}
+
+void drawPlayer() {
+  noStroke();
+  fill(238, 130, 238, 50);
+  rectMode(CORNER);
+  for (PVector position : player.previousPositions) {
+    rect(position.x + (player.size.x/2), position.y + (player.size.y/4), player.size.x/2, player.size.y/2);
+  }
+  player.draw();
 }
 
 void drawButtons() {
@@ -68,12 +102,7 @@ void drawButtons() {
 
 void drawBackground() {
   background(255);
-  noStroke();
-  fill(230);
-  rect(0, 642, width, 21);
-  fill(0, 255, 0);
-  rect(308, 642, 42, 21);
-  image(path, 0, 0);
+  image(path, imagePosition.x, imagePosition.y);
 }
 
 List<Block> codeTrain = new LinkedList<Block>();
@@ -111,30 +140,32 @@ List<Block> generateTrain(Block firstElement, List<Block> elements) {
 List<Block> train(List<Block> elements, List<Block> train) {
   Block end = train.get(train.size() - 1);
   for (Block e : elements) {
-    float dist = dist(end.position.x, end.position.y, e.position.x, e.position.y);
-    float angle = atan2(e.position.y - end.position.y, e.position.x - end.position.x) + (PI*1.5);
-    if (e instanceof Query && end instanceof If && anglesClose(angle - (TWO_PI * 0.75), end.rotation, e.rotation, 0.5) && dist < end.size + e.size) {
-      If ifEnd = (If) end;
-      ifEnd.setQuery((Query) e);
-      elements.remove(e);
-      return train(elements, train);
-    } else if (end instanceof Iterable && dist < end.size + e.size) {
-      if (anglesClose(angle - (TWO_PI * 0.875), end.rotation, e.rotation, 0.5)) {
-        train.add(e);
+    if (!(e instanceof TriggerBlock)) {
+      float dist = dist(end.position.x, end.position.y, e.position.x, e.position.y);
+      float angle = atan2(e.position.y - end.position.y, e.position.x - end.position.x) + (PI*1.5);
+      if (e instanceof Query && end instanceof If && anglesClose(angle - (TWO_PI * 0.75), end.rotation, e.rotation, 0.5) && dist < end.size + e.size) {
+        If ifEnd = (If) end;
+        ifEnd.setQuery((Query) e);
         elements.remove(e);
         return train(elements, train);
-      }
-    } else if (e instanceof OutDent && dist < end.size + e.size) {
-      if (anglesClose((angle + (TWO_PI * 0.875)) % TWO_PI, end.rotation, e.rotation, 0.5)) {
-        train.add(e);
-        elements.remove(e);
-        return train(elements, train);
-      }
-    } else if (dist < end.size + e.size) {
-      if (anglesClose(angle, end.rotation, e.rotation, 0.5)) {
-        train.add(e);
-        elements.remove(e);
-        return train(elements, train);
+      } else if (end instanceof Iterable && dist < end.size + e.size) {
+        if (anglesClose(angle - (TWO_PI * 0.875), end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
+      } else if (e instanceof OutDent && dist < end.size + e.size) {
+        if (anglesClose((angle + (TWO_PI * 0.875)) % TWO_PI, end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
+      } else if (dist < end.size + e.size) {
+        if (anglesClose(angle, end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
       }
     }
   }

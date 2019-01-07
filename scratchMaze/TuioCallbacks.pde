@@ -55,7 +55,9 @@ void removeTuioObject(TuioObject object) {
 }
 
 PVector tuioObjectPosition(TuioObject object) {
-  return new PVector(object.getScreenX(width), object.getScreenY(height));
+  //return new PVector(object.getScreenX(width), object.getScreenY(height));
+ 
+  return new PVector(object.getScreenX(width) * screenScale.x, object.getScreenY(height) * screenScale.y);
 }
 
 void refresh(TuioTime bundleTime) {
@@ -63,15 +65,15 @@ void refresh(TuioTime bundleTime) {
 
 class Cursor {
   PVector position;
-  
+
   Cursor(PVector position) {
     update(position);
   }
-  
+
   void update(PVector position) {
     this.position = position;
   }
-  
+
   void draw() {
     strokeWeight(3);
     stroke(120, 120, 255);
@@ -83,7 +85,7 @@ class Cursor {
 HashMap<Integer, Cursor> cursors = new HashMap<Integer, Cursor>();
 
 PVector tuioCursorPosition(TuioCursor cursor) {
-  return new PVector(cursor.getScreenX(width),cursor.getScreenY(height));
+  return new PVector(cursor.getScreenX(width), cursor.getScreenY(height));
 }
 
 void addTuioCursor(TuioCursor tcur) {
@@ -91,7 +93,7 @@ void addTuioCursor(TuioCursor tcur) {
 }
 void removeTuioCursor(TuioCursor tcur) {
   cursors.remove((int) tcur.getSessionID());
-  
+
   PVector position = tuioCursorPosition(tcur);
   if (playPauseButton.inButton(position)) {
     playPauseButton.pressed();

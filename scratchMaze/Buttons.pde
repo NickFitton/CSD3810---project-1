@@ -21,13 +21,13 @@ abstract class Button {
       ellipse(position.x, position.y, size, size);
     } else {
       rectMode(CENTER);
-      rect(position.x, position.y, size, size);
+      rect(position.x, position.y, size, size, rectBorder);
     }
     fill(0);
     textAlign(CENTER, CENTER);
     text(name, position.x, position.y);
   }
-  
+
   abstract void pressed();
 
   boolean inButton(PVector input) {
@@ -36,9 +36,9 @@ abstract class Button {
 }
 
 class PlayPauseButton extends Button {
-  
+
   private boolean playing = false;
-  
+
   PlayPauseButton(PVector position, float size) {
     super(position, size, true, color(240, 100, 100), "play/pause");
   }
@@ -51,20 +51,20 @@ class PlayPauseButton extends Button {
       buttonColor = color(240, 100, 100);
     }
   }
-  
+
   void setPlaying(boolean state) {
     playing = state;
     setColor(state);
   }
-  
+
   boolean getPlaying() {
     return playing;
   }
-  
+
   void pressed() {
     toggle();
   }
-  
+
   void setColor(boolean state) {
     if (state == true) {
       buttonColor = color(100, 240, 100);
@@ -78,10 +78,10 @@ class ResetButton extends Button {
   ResetButton(PVector position, float size) {
     super(position, size, true, color(218, 112, 214), "reset");
   }
-  
+
   void pressed() {
     playPauseButton.setPlaying(false);
-    player = new Player(new PVector(5, 5));
+    player = new Player(new PVector(215, 215));
     actions.pointer.reset();
   }
 }

@@ -4,7 +4,7 @@ abstract class Block {
   PVector position;
   float rotation;
   long fedId;
-  float size = 90;
+  float size = 120;
 
   Block(TuioObject obj) {
     this.fedId = obj.getSymbolID();
@@ -22,7 +22,7 @@ abstract class Block {
   abstract void drawBlock();
 
   void moveBlock(TuioObject obj) {
-    this.position = new PVector(obj.getScreenX(width), obj.getScreenY(height));
+    this.position = tuioObjectPosition(obj);
     this.rotation = obj.getAngle();
   }
 
@@ -65,7 +65,7 @@ class Start extends Block {
         public void run() {
         fill(125, 125, 125);
         rectMode(CENTER);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(255);
         textAlign(CENTER, CENTER);
         text("start", 0, 0);
@@ -96,7 +96,7 @@ class OutDent extends Block {
         public void run() {
         fill(255);
         rectMode(CENTER);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text("}", 0, 0);
       }
@@ -150,7 +150,7 @@ class Up extends Movement {
         public void run() {
         rectMode(CENTER);
         fill(125, 125, 0);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text("^", 0, 0);
       }
@@ -175,7 +175,7 @@ class Down extends Movement {
         public void run() {
         rectMode(CENTER);
         fill(125, 0, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text("V", 0, 0);
       }
@@ -200,7 +200,7 @@ class Right extends Movement {
         public void run() {
         rectMode(CENTER);
         fill(0, 125, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text(">", 0, 0);
       }
@@ -225,7 +225,7 @@ class Left extends Movement {
         public void run() {
         rectMode(CENTER);
         fill(175, 0, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text("<", 0, 0);
       }
@@ -289,7 +289,7 @@ class ForLoop extends Iterable {
         String label = "for (0:" + iterations + ") {";
         rectMode(CENTER);
         fill(175, 0, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text(label, 0, 0);
       }
@@ -315,7 +315,7 @@ class InfiniteLoop extends Iterable {
         String label = "8";
         rectMode(CENTER);
         fill(175, 0, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         rotate(PI/2);
         text(label, 0, 0);
@@ -358,11 +358,11 @@ abstract class Conditional extends Iterable {
 }
 
 class If extends Conditional {
-  
+
   boolean beenExecuted = false;
-  
+
   @Override()
-  boolean execute() {
+    boolean execute() {
     if (beenExecuted) {
       beenExecuted = false;
       return true;
@@ -371,7 +371,7 @@ class If extends Conditional {
       return !query.execute();
     }
   }
-  
+
   If(TuioObject obj) {
     super(obj);
     this.action = "if";
@@ -384,11 +384,40 @@ class If extends Conditional {
         String label = getStatement();
         rectMode(CENTER);
         fill(175, 0, 125);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text(label, 0, 0);
       }
     }
     );
+  }
+}
+
+class TriggerBlock extends Block {
+  TriggerBlock(TuioObject obj) {
+    super(obj);
+    this.action = "trigger";
+  }
+
+  void drawBlock() {
+    runnableDraw(new Runnable() {
+      @Override
+        public void run() {
+        ellipseMode(CENTER);
+        fill(0);
+        ellipse(0, 0, size, size);
+        fill(255);
+        text(action, 0, 0);
+      }
+    }
+    );
+  }
+
+  boolean execute() {
+    return false;
+  }
+
+  List<Block> getSubBlocks() {
+    return new LinkedList();
   }
 }

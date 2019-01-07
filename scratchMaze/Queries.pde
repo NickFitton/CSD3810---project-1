@@ -16,14 +16,14 @@ abstract class Query extends Block {
   }
 
   abstract boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps);
-  
+
   void drawBlock() {
     runnableDraw(new Runnable() {
       @Override
         public void run() {
         fill(0, 200, 0);
         rectMode(CENTER);
-        rect(0, 0, size, size);
+        rect(0, 0, size, size, rectBorder);
         fill(0);
         text(statement, 0, 0);
       }

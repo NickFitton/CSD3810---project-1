@@ -103,6 +103,10 @@ class Actions {
     popMatrix();
     textAlign(CENTER, CENTER);
   }
+  
+  void drawBlocks(List<Block> givenBlocks, int indentation, int[] fPointer) {
+    
+  }
 
   void printBlocks(List<Block> givenBlocks, int indentation, int[] fPointer) {
     for (Block block : givenBlocks) {
@@ -115,7 +119,7 @@ class Actions {
       }
       if (block instanceof Conditional) {
         Conditional cond = (Conditional) block;
-        
+
         text(cond.getStatement(), 20, 20);
       } else {
         text(block.action, 20, 20);
@@ -158,7 +162,6 @@ class Actions {
       } else {
         pointer.reset();
         playPauseButton.setPlaying(false);
-        println("Reached end of action list");
       }
     }
   }
