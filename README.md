@@ -22,3 +22,12 @@ We will get individuals and groups to interact with the table to see who did bet
 We will write written observations of the students.\
 If the students use the table in a way we don't expect, record the new interaction as an example of beyond simple usability.\
 We will then give them a questionnaire or google form to get their opinion of the project, using scaled questions, open ended and closed questions.\
+
+## TODO
+- [ ] Chained if statements don't work
+- [ ] Complete if statements condition cannot be changed
+- [ ] Play/pause & reset buttons
+- [ ] Visuals
+
+## Possible improvements
+* Project is not Turing complete, other functionality such as while loops and multiple things in an if statement havn't been done
