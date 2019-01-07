@@ -157,7 +157,7 @@ class Actions {
         pointer.outdent();
       } else {
         pointer.reset();
-        playing = false;
+        playPauseButton.setPlaying(false);
         println("Reached end of action list");
       }
     }

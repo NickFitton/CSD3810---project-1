@@ -3,11 +3,13 @@ import java.util.*;
 Player player;
 PImage path;
 boolean tuioUpdated = false;
-boolean playing = false;
 
 HashMap<Integer, Block> blocks = new HashMap<Integer, Block>();
 Actions actions;
 TuioProcessing tuioClient;
+
+PlayPauseButton playPauseButton;
+ResetButton resetButton;
 
 void setup() {
   textAlign(CENTER, CENTER);
@@ -19,6 +21,8 @@ void setup() {
 
   actions = new Actions();
   tuioClient = new TuioProcessing(this);
+  playPauseButton = new PlayPauseButton(new PVector(width-125, height-75), 50);
+  resetButton = new ResetButton(new PVector(width-50, height-75), 50);
   background(50);
 }
 
@@ -31,8 +35,8 @@ void draw() {
     tuioUpdated = false;
     actions.update(codeTrain);
   }
-  
-  if (playing) {
+
+  if (playPauseButton.getPlaying()) {
     try {
       actions.execute();
     } 
@@ -50,6 +54,16 @@ void draw() {
   actions.printActions(width - 150, 25);
   player.collide(path);
   player.draw();
+  drawButtons();
+
+  for (Cursor c: cursors.values()) {
+    c.draw();
+  }
+}
+
+void drawButtons() {
+  playPauseButton.draw();
+  resetButton.draw();
 }
 
 void drawBackground() {
@@ -166,6 +180,16 @@ void drawCodeTrain(List<Block> train) {
 
 void keyPressed() {
   if (key == ' ') {
-    playing = !playing;
+    playPauseButton.pressed();
+  }
+}
+
+void mousePressed() {
+  PVector mousePos = new PVector(mouseX, mouseY);
+  if (playPauseButton.inButton(mousePos)) {
+    playPauseButton.pressed();
+  }
+  if (resetButton.inButton(mousePos)) {
+    resetButton.pressed();
   }
 }
