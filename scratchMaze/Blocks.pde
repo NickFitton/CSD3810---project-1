@@ -63,9 +63,12 @@ class Start extends Block {
     runnableDraw(new Runnable() {
       @Override
         public void run() {
-        fill(255);
+        fill(125, 125, 125);
         rectMode(CENTER);
         rect(0, 0, size, size);
+        fill(255);
+        textAlign(CENTER, CENTER);
+        text("start", 0, 0);
       }
     }
     );
@@ -284,12 +287,11 @@ class ForLoop extends Iterable {
       @Override
         public void run() {
         String label = "for (0:" + iterations + ") {";
-        float textWidth = textWidth(label);
         rectMode(CENTER);
         fill(175, 0, 125);
         rect(0, 0, size, size);
         fill(0);
-        text(label, -textWidth/2, 0);
+        text(label, 0, 0);
       }
     }
     );
@@ -311,13 +313,12 @@ class InfiniteLoop extends Iterable {
       @Override
         public void run() {
         String label = "8";
-        float textWidth = textWidth(label);
         rectMode(CENTER);
         fill(175, 0, 125);
         rect(0, 0, size, size);
         fill(0);
         rotate(PI/2);
-        text(label, -textWidth/2, 0);
+        text(label, 0, 0);
       }
     }
     );
@@ -357,6 +358,20 @@ abstract class Conditional extends Iterable {
 }
 
 class If extends Conditional {
+  
+  boolean beenExecuted = false;
+  
+  @Override()
+  boolean execute() {
+    if (beenExecuted) {
+      beenExecuted = false;
+      return true;
+    } else {
+      beenExecuted = true;
+      return !query.execute();
+    }
+  }
+  
   If(TuioObject obj) {
     super(obj);
     this.action = "if";
@@ -367,66 +382,13 @@ class If extends Conditional {
       @Override
         public void run() {
         String label = getStatement();
-        float textWidth = textWidth(label);
         rectMode(CENTER);
         fill(175, 0, 125);
         rect(0, 0, size, size);
         fill(0);
-        text(label, -textWidth/2, 0);
+        text(label, 0, 0);
       }
     }
     );
   }
 }
-
-//class IfElse extends Conditional {
-//  boolean success;
-
-//  List<Block> elseBlocks;
-
-//  IfElse(TuioObject obj) {
-//    super(obj);
-//    elseBlocks = new LinkedList();
-//    action = "if else";
-//  }
-
-//  void addElseBlock(Block block) {
-//    elseBlocks = (List<Block>) append(elseBlocks, block);
-//  }
-
-//  void addElseBlocks(Block... blocks) {
-//    for (Block block : blocks) {
-//      addElseBlock(block);
-//    }
-//  }
-
-//  void drawBlock() {
-//    runnableDraw(new Runnable() {
-//      @Override
-//        public void run() {
-//        String label = "} else {";
-//        float textWidth = textWidth(label);
-//        rectMode(CENTER);
-//        fill(175, 0, 125);
-//        rect(0, 0, size, size);
-//        fill(0);
-//        text(label, -textWidth/2, 0);
-//      }
-//    }
-//    );
-//  }
-
-//  List<Block> getSubBlocks() {
-//    execute();
-//    if (!success) {
-//      return subBlocks;
-//    } else {
-//      return elseBlocks;
-//    }
-//  }
-
-//  boolean execute() {
-//    success = !query.execute(player, path);
-//    return false;
-//  }
-//}

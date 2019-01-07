@@ -90,6 +90,8 @@ class Actions {
   }
 
   void printActions(int x, int y) {
+    textAlign(LEFT);
+    pushMatrix();
     translate(x, y);
     fill(0);
     stroke(0);
@@ -98,6 +100,8 @@ class Actions {
     fauxPointer[0] = 0;
     printBlocks(blocks, 0, fauxPointer);
     popMatrix();
+    popMatrix();
+    textAlign(CENTER, CENTER);
   }
 
   void printBlocks(List<Block> givenBlocks, int indentation, int[] fPointer) {
@@ -120,14 +124,6 @@ class Actions {
       if (block instanceof Iterable) {
         Iterable iterable = (Iterable) block;
         translate(printScale.x, 0);
-        //if (block instanceof IfElse) {
-        //  printBlocks(iterable.subBlocks, indentation+1, append(fPointer, 0));
-        //  translate(-printScale.x, 0);
-        //  text("else", 20, 20);
-        //  translate(printScale.x, printScale.y);
-        //  printBlocks(((IfElse) iterable).elseBlocks, indentation+1, append(fPointer,0));
-        //  translate(-printScale.x, printScale.y);
-        //} else {
         printBlocks(iterable.getSubBlocks(), indentation+1, append(fPointer, 0));
         translate(-printScale.x, 0);
         //}
@@ -156,12 +152,13 @@ class Actions {
         }
       }
     } 
-    catch (ArrayIndexOutOfBoundsException e) {
+    catch (IndexOutOfBoundsException e) {
       if (pointer.pointer.length > 1) {
         pointer.outdent();
       } else {
+        pointer.reset();
+        playing = false;
         println("Reached end of action list");
-        noLoop();
       }
     }
   }

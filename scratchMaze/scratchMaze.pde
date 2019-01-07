@@ -3,15 +3,19 @@ import java.util.*;
 Player player;
 PImage path;
 boolean tuioUpdated = false;
+boolean playing = false;
 
 HashMap<Integer, Block> blocks = new HashMap<Integer, Block>();
 Actions actions;
 TuioProcessing tuioClient;
 
 void setup() {
+  textAlign(CENTER, CENTER);
   size(800, 663);
   smooth();
   frameRate(60);
+  path = loadImage("path.png");
+  player = new Player(new PVector(5, 5));
 
   actions = new Actions();
   tuioClient = new TuioProcessing(this);
@@ -19,19 +23,43 @@ void setup() {
 }
 
 void draw() {
+  List<Block> currentBlocks = new LinkedList<Block>(blocks.values());
   if (tuioUpdated) {
-    List<Block> currentBlocks = new LinkedList<Block>(blocks.values());
     background(50);
 
     updateCodeTrain(new LinkedList(currentBlocks));
     tuioUpdated = false;
-    for (Block b : currentBlocks) {
-      b.drawBlock();
-    }
-    drawCodeTrain(codeTrain);
     actions.update(codeTrain);
-    actions.printActions(50, 50);
   }
+  
+  if (playing) {
+    try {
+      actions.execute();
+    } 
+    catch (IOException e) {
+      noLoop();
+      println("[ERROR] Pointed at an invalid block");
+      println("[ERROR] Pointer at: ", actions.pointer.pointer);
+    }
+  }
+  drawBackground();
+  for (Block b : currentBlocks) {
+    b.drawBlock();
+  }
+  drawCodeTrain(codeTrain);
+  actions.printActions(width - 150, 25);
+  player.collide(path);
+  player.draw();
+}
+
+void drawBackground() {
+  background(255);
+  noStroke();
+  fill(230);
+  rect(0, 642, width, 21);
+  fill(0, 255, 0);
+  rect(308, 642, 42, 21);
+  image(path, 0, 0);
 }
 
 List<Block> codeTrain = new LinkedList<Block>();
@@ -133,5 +161,11 @@ void drawCodeTrain(List<Block> train) {
     Block a = train.get(i);
     Block b = train.get(i + 1);
     line(a.position.x, a.position.y, b.position.x, b.position.y);
+  }
+}
+
+void keyPressed() {
+  if (key == ' ') {
+    playing = !playing;
   }
 }

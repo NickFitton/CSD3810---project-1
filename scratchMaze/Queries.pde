@@ -21,12 +21,11 @@ abstract class Query extends Block {
     runnableDraw(new Runnable() {
       @Override
         public void run() {
-        float textWidth = textWidth(statement);
         fill(0, 200, 0);
         rectMode(CENTER);
         rect(0, 0, size, size);
         fill(0);
-        text(statement, -(textWidth/2), 0);
+        text(statement, 0, 0);
       }
     }
     );
@@ -58,8 +57,40 @@ class CanGoDown extends Query {
   boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
     println("path clear");
     for (int i=0; i<steps; i++) {
-      if (path.get(floor(player.position.x), floor(player.position.y + player.size.y - i)) == black ||
-        path.get(floor(player.position.x + player.size.x), floor(player.position.y + player.size.y - i)) == black) {
+      if (path.get(floor(player.position.x), floor(player.position.y + player.size.y + i)) == black ||
+        path.get(floor(player.position.x + player.size.x), floor(player.position.y + player.size.y + i)) == black) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+class CanGoRight extends Query {
+  CanGoRight(TuioObject obj) {
+    super(obj, "Can go right");
+  }
+
+  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
+    for (int i=0; i<steps; i++) {
+      if (path.get(floor(player.position.x + player.size.x + i), floor(player.position.y)) == black ||
+        path.get(floor(player.position.x + player.size.x + i), floor(player.position.y + player.size.y)) == black) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+class CanGoLeft extends Query {
+  CanGoLeft(TuioObject obj) {
+    super(obj, "Can go left");
+  }
+
+  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
+    for (int i=0; i<steps; i++) {
+      if (path.get(floor(player.position.x - i), floor(player.position.y)) == black ||
+        path.get(floor(player.position.x - i), floor(player.position.y + player.size.y)) == black) {
         return false;
       }
     }
