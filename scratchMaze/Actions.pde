@@ -98,13 +98,45 @@ class Actions {
     pushMatrix();
     int[] fauxPointer = new int[1];
     fauxPointer[0] = 0;
-    printBlocks(blocks, 0, fauxPointer);
+    printBlocks(blocks, fauxPointer);
     popMatrix();
     popMatrix();
     textAlign(CENTER, CENTER);
   }
 
-  void printBlocks(List<Block> givenBlocks, int indentation, int[] fPointer) {
+  public void drawBlocks() {
+    rectMode(CENTER);
+    int[] fauxPointer = new int[1];
+    fauxPointer[0] = 0;
+    drawBlocks(blocks, fauxPointer);
+  }
+
+  private void drawBlocks(List<Block> givenBlocks, int[] fPointer) {
+    for (Block block : givenBlocks) {
+      pushMatrix();
+      translate(block.position.x, block.position.y);
+      rotate(block.rotation);
+      float blockSize = block.size + 15;
+      if (pointer.equals(fPointer)) {
+        fill(0, 255, 0, 100);
+        if (block instanceof Movement) {
+          Movement m = (Movement) block;
+          blockSize += sin(m.getProgress() * PI) * 10;
+        }
+      } else {
+        fill(0, 0, 255, 100);
+      }
+      rect(0, 0, blockSize, blockSize, rectBorder);
+      popMatrix();
+      if (block instanceof Iterable) {
+        Iterable iterable = (Iterable) block;
+        drawBlocks(iterable.getSubBlocks(), append(fPointer, 0));
+      }
+      fPointer[fPointer.length-1]++;
+    }
+  }
+
+  void printBlocks(List<Block> givenBlocks, int[] fPointer) {
     for (Block block : givenBlocks) {
       if (pointer.equals(fPointer)) {
         fill(0, 255, 0);
@@ -115,7 +147,7 @@ class Actions {
       }
       if (block instanceof Conditional) {
         Conditional cond = (Conditional) block;
-        
+
         text(cond.getStatement(), 20, 20);
       } else {
         text(block.action, 20, 20);
@@ -124,9 +156,8 @@ class Actions {
       if (block instanceof Iterable) {
         Iterable iterable = (Iterable) block;
         translate(printScale.x, 0);
-        printBlocks(iterable.getSubBlocks(), indentation+1, append(fPointer, 0));
+        printBlocks(iterable.getSubBlocks(), append(fPointer, 0));
         translate(-printScale.x, 0);
-        //}
       }
       fPointer[fPointer.length-1]++;
     }
@@ -136,11 +167,6 @@ class Actions {
     try {
       // Grab the block currently pointed at
       Block currentBlock = pointer.point(blocks);
-      if (currentBlock instanceof Iterable) {
-        println("fucking why?");
-      } else {
-        println(currentBlock.action);
-      }
       // Execute the block (if it's a movement move the user, if it's a loop, take the next step)
       boolean state = currentBlock.execute();
       if (state) {
@@ -157,8 +183,7 @@ class Actions {
         pointer.outdent();
       } else {
         pointer.reset();
-        playing = false;
-        println("Reached end of action list");
+        playPauseButton.setPlaying(false);
       }
     }
   }

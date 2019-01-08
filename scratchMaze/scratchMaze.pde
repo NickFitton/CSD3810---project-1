@@ -3,36 +3,41 @@ import java.util.*;
 Player player;
 PImage path;
 boolean tuioUpdated = false;
-boolean playing = false;
+boolean triggerOnPlay = false;
 
 HashMap<Integer, Block> blocks = new HashMap<Integer, Block>();
 Actions actions;
 TuioProcessing tuioClient;
 
+PlayPauseButton playPauseButton;
+ResetButton resetButton;
+
 void setup() {
   textAlign(CENTER, CENTER);
-  size(800, 663);
+  size(1560, 1000);
   smooth();
   frameRate(60);
-  path = loadImage("path.png");
-  player = new Player(new PVector(5, 5));
+  if (displayImage) {
+    path = loadImage("newPath.png");
+  }
+  player = new Player(new PVector(5 + imagePosition.x, 5 + imagePosition.y));
 
   actions = new Actions();
   tuioClient = new TuioProcessing(this);
+  playPauseButton = new PlayPauseButton(new PVector(width-100, 100), 100);
+  resetButton = new ResetButton(new PVector(width-100, height-100), 100);
   background(50);
 }
 
 void draw() {
   List<Block> currentBlocks = new LinkedList<Block>(blocks.values());
   if (tuioUpdated) {
-    background(50);
-
     updateCodeTrain(new LinkedList(currentBlocks));
     tuioUpdated = false;
     actions.update(codeTrain);
   }
-  
-  if (playing) {
+
+  if (playPauseButton.getPlaying()) {
     try {
       actions.execute();
     } 
@@ -41,25 +46,70 @@ void draw() {
       println("[ERROR] Pointed at an invalid block");
       println("[ERROR] Pointer at: ", actions.pointer.pointer);
     }
+  } else if (player.previousPositions.size() > 0) {
+    player.previousPositions.remove(0);
   }
   drawBackground();
+  actions.drawBlocks();
   for (Block b : currentBlocks) {
     b.drawBlock();
   }
-  drawCodeTrain(codeTrain);
-  actions.printActions(width - 150, 25);
-  player.collide(path);
+  drawPlayer();
+  drawButtons();
+
+  for (Cursor c : cursors.values()) {
+    c.draw();
+  }
+
+  Optional<TriggerBlock> b = getTriggerBlock();
+  if (b.isPresent()) {
+    TriggerBlock trigger = b.get();
+
+    if (playPauseButton.inButton(trigger.position)) {
+      if (!triggerOnPlay) {
+        playPauseButton.setPlaying(true);
+      }
+      triggerOnPlay = true;
+    } else {
+      playPauseButton.setPlaying(false);
+      triggerOnPlay = false;
+    }
+    if (resetButton.inButton(trigger.position)) {
+      resetButton.pressed();
+    }
+  }
+}
+
+Optional<TriggerBlock> getTriggerBlock() {
+  for (Block b : blocks.values()) {
+    if (b instanceof TriggerBlock) {
+      return Optional.of((TriggerBlock) b);
+    }
+  }
+  return Optional.empty();
+}
+
+void drawPlayer() {
+  noStroke();
+  //fill(238, 130, 238, 50);
+  fill(50, 50);
+  rectMode(CORNER);
+  for (PVector position : player.previousPositions) {
+    rect(position.x + (playerSize.y/4), position.y + (playerSize.y/4), playerSize.x/2, playerSize.y/2);
+  }
   player.draw();
+}
+
+void drawButtons() {
+  playPauseButton.draw();
+  resetButton.draw();
 }
 
 void drawBackground() {
   background(255);
-  noStroke();
-  fill(230);
-  rect(0, 642, width, 21);
-  fill(0, 255, 0);
-  rect(308, 642, 42, 21);
-  image(path, 0, 0);
+  if (displayImage) {
+    image(path, imagePosition.x, imagePosition.y);
+  }
 }
 
 List<Block> codeTrain = new LinkedList<Block>();
@@ -78,7 +128,6 @@ void updateCodeTrain(List<Block> elements) {
   } else {
     codeTrain = new LinkedList();
   }
-  //println(codeTrain);
 }
 
 /**
@@ -97,30 +146,32 @@ List<Block> generateTrain(Block firstElement, List<Block> elements) {
 List<Block> train(List<Block> elements, List<Block> train) {
   Block end = train.get(train.size() - 1);
   for (Block e : elements) {
-    float dist = dist(end.position.x, end.position.y, e.position.x, e.position.y);
-    float angle = atan2(e.position.y - end.position.y, e.position.x - end.position.x) + (PI*1.5);
-    if (e instanceof Query && end instanceof If && anglesClose(angle - (TWO_PI * 0.75), end.rotation, e.rotation, 0.5) && dist < end.size + e.size) {
-      If ifEnd = (If) end;
-      ifEnd.setQuery((Query) e);
-      elements.remove(e);
-      return train(elements, train);
-    } else if (end instanceof Iterable && dist < end.size + e.size) {
-      if (anglesClose(angle - (TWO_PI * 0.875), end.rotation, e.rotation, 0.5)) {
-        train.add(e);
+    if (!(e instanceof TriggerBlock)) {
+      float dist = dist(end.position.x, end.position.y, e.position.x, e.position.y);
+      float angle = atan2(e.position.y - end.position.y, e.position.x - end.position.x) + (PI*1.5);
+      if (e instanceof Query && end instanceof If && anglesClose(angle - (TWO_PI * 0.75), end.rotation, e.rotation, 0.5) && dist < end.size + e.size) {
+        If ifEnd = (If) end;
+        ifEnd.setQuery((Query) e);
         elements.remove(e);
         return train(elements, train);
-      }
-    } else if (e instanceof OutDent && dist < end.size + e.size) {
-      if (anglesClose((angle + (TWO_PI * 0.875)) % TWO_PI, end.rotation, e.rotation, 0.5)) {
-        train.add(e);
-        elements.remove(e);
-        return train(elements, train);
-      }
-    } else if (dist < end.size + e.size) {
-      if (anglesClose(angle, end.rotation, e.rotation, 0.5)) {
-        train.add(e);
-        elements.remove(e);
-        return train(elements, train);
+      } else if (end instanceof Iterable && dist < end.size + e.size) {
+        if (anglesClose(angle - (TWO_PI * 0.875), end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
+      } else if (e instanceof OutDent && dist < end.size + e.size) {
+        if (anglesClose((angle + (TWO_PI * 0.875)) % TWO_PI, end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
+      } else if (dist < end.size + e.size) {
+        if (anglesClose(angle, end.rotation, e.rotation, 0.5)) {
+          train.add(e);
+          elements.remove(e);
+          return train(elements, train);
+        }
       }
     }
   }
@@ -166,6 +217,16 @@ void drawCodeTrain(List<Block> train) {
 
 void keyPressed() {
   if (key == ' ') {
-    playing = !playing;
+    playPauseButton.pressed();
+  }
+}
+
+void mousePressed() {
+  PVector mousePos = new PVector(mouseX, mouseY);
+  if (playPauseButton.inButton(mousePos)) {
+    playPauseButton.pressed();
+  }
+  if (resetButton.inButton(mousePos)) {
+    resetButton.pressed();
   }
 }
