@@ -44,6 +44,8 @@ void draw() {
       println("[ERROR] Pointed at an invalid block");
       println("[ERROR] Pointer at: ", actions.pointer.pointer);
     }
+  } else if (player.previousPositions.size() > 0) {
+    player.previousPositions.remove(0);
   }
   drawBackground();
   for (Block b : currentBlocks) {
@@ -86,7 +88,7 @@ void drawPlayer() {
   fill(238, 130, 238, 50);
   rectMode(CORNER);
   for (PVector position : player.previousPositions) {
-    rect(position.x + (player.size.x/2), position.y + (player.size.y/4), player.size.x/2, player.size.y/2);
+    rect(position.x + (player.size.y/4), position.y + (player.size.y/4), player.size.x/2, player.size.y/2);
   }
   player.draw();
 }

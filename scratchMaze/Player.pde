@@ -1,6 +1,6 @@
 class Player {
-  PVector position;
-  PVector previousPosition;
+  private PVector position;
+  private PVector previousPosition;
   PVector size = new PVector(5, 5);
   int scale;
   CanGoUp up;
@@ -38,9 +38,6 @@ class Player {
     position.add(new PVector(0, -scale));
     if (collision && path.get(floor(getPositionX() + (player.size.x/2)), getPositionY()) == black) {
       position.y = previousPosition.y;
-    }
-    if (previousPositions.size() > 10) {
-      previousPositions.remove(0);
     }
   }
 
