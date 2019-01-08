@@ -3,6 +3,7 @@ import java.util.*;
 Player player;
 PImage path;
 boolean tuioUpdated = false;
+boolean triggerOnPlay = false;
 
 HashMap<Integer, Block> blocks = new HashMap<Integer, Block>();
 Actions actions;
@@ -14,10 +15,11 @@ ResetButton resetButton;
 void setup() {
   textAlign(CENTER, CENTER);
   size(1560, 1000);
-  //size(780, 500);
   smooth();
   frameRate(60);
-  path = loadImage("newPath.png");
+  if (displayImage) {
+    path = loadImage("newPath.png");
+  }
   player = new Player(new PVector(5 + imagePosition.x, 5 + imagePosition.y));
 
   actions = new Actions();
@@ -52,7 +54,6 @@ void draw() {
   for (Block b : currentBlocks) {
     b.drawBlock();
   }
-  //drawCodeTrain(codeTrain);
   drawPlayer();
   drawButtons();
 
@@ -65,9 +66,13 @@ void draw() {
     TriggerBlock trigger = b.get();
 
     if (playPauseButton.inButton(trigger.position)) {
-      playPauseButton.setPlaying(true);
+      if (!triggerOnPlay) {
+        playPauseButton.setPlaying(true);
+      }
+      triggerOnPlay = true;
     } else {
       playPauseButton.setPlaying(false);
+      triggerOnPlay = false;
     }
     if (resetButton.inButton(trigger.position)) {
       resetButton.pressed();
@@ -86,10 +91,11 @@ Optional<TriggerBlock> getTriggerBlock() {
 
 void drawPlayer() {
   noStroke();
-  fill(238, 130, 238, 50);
+  //fill(238, 130, 238, 50);
+  fill(50, 50);
   rectMode(CORNER);
   for (PVector position : player.previousPositions) {
-    rect(position.x + (player.size.y/4), position.y + (player.size.y/4), player.size.x/2, player.size.y/2);
+    rect(position.x + (playerSize.y/4), position.y + (playerSize.y/4), playerSize.x/2, playerSize.y/2);
   }
   player.draw();
 }
@@ -101,7 +107,9 @@ void drawButtons() {
 
 void drawBackground() {
   background(255);
-  image(path, imagePosition.x, imagePosition.y);
+  if (displayImage) {
+    image(path, imagePosition.x, imagePosition.y);
+  }
 }
 
 List<Block> codeTrain = new LinkedList<Block>();

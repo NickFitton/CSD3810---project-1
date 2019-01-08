@@ -11,7 +11,7 @@ abstract class Query extends Block {
   }
 
   boolean execute() {
-    boolean clear = pathClear(player.position.copy(), player.size, player.scale, path);
+    boolean clear = pathClear(player.position.copy(), playerSize, player.scale, path);
     return clear;
   }
 
@@ -82,7 +82,7 @@ abstract class HowFar {
 
 class HowFarUp extends HowFar {
   int steps(Player player, PImage path, int step) {
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black || step >= 100) {
+    if (path.get(floor(player.position.x + (playerSize.x/2)), floor(player.position.y)) == black || step >= 100) {
       return step;
     }
     player.position.y--;
@@ -92,7 +92,7 @@ class HowFarUp extends HowFar {
 
 class HowFarRight extends HowFar {
   int steps(Player player, PImage path, int step) {
-    if (path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black || step >= 100) {
+    if (path.get(floor(player.position.x + playerSize.x), floor(player.position.y + (playerSize.y/2))) == black || step >= 100) {
       return step;
     }
     player.position.x++;
@@ -102,7 +102,7 @@ class HowFarRight extends HowFar {
 
 class HowFarLeft extends HowFar {
   int steps(Player player, PImage path, int step) {
-    if (path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black || step >= 100) {
+    if (path.get(floor(player.position.x), floor(player.position.y + (playerSize.y/2))) == black || step >= 100) {
       return step;
     }
     player.position.x--;
@@ -112,7 +112,7 @@ class HowFarLeft extends HowFar {
 
 class HowFarDown extends HowFar {
   int steps(Player player, PImage path, int step) {
-    if (path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black || step >= 100) {
+    if (path.get(floor(player.position.x + (playerSize.x/2)), floor(player.position.y + playerSize.y)) == black || step >= 100) {
       return step;
     }
     player.position.y++;

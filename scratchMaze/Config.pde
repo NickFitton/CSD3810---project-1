@@ -1,5 +1,8 @@
 int stepCount = 15; // Dictates the stride of the entity, the smaller the number, the less it moves per action
 boolean collision = true; // If true, player can collide with walls
+boolean displayImage = true;
+
+PVector playerSize = new PVector(5, 5);
 
 color black = color(0, 0, 0);
 int rectBorder = 8;

@@ -1,7 +1,6 @@
 class Player {
   private PVector position;
   private PVector previousPosition;
-  PVector size = new PVector(5, 5);
   int scale;
   CanGoUp up;
   CanGoDown down;
@@ -36,7 +35,7 @@ class Player {
   void moveUp() {
     move();
     position.add(new PVector(0, -scale));
-    if (collision && path.get(floor(getPositionX() + (player.size.x/2)), getPositionY()) == black) {
+    if (collision && path.get(floor(getPositionX() + (playerSize.x/2)), getPositionY()) == black) {
       position.y = previousPosition.y;
     }
   }
@@ -44,7 +43,7 @@ class Player {
   void moveDown() {
     move();
     position.add(new PVector(0, scale));
-    if (collision && path.get(floor(getPositionX() + (player.size.x/2)), floor(getPositionY() + player.size.y)) == black) {
+    if (collision && path.get(floor(getPositionX() + (playerSize.x/2)), floor(getPositionY() + playerSize.y)) == black) {
       position.y = previousPosition.y;
     }
   }
@@ -52,7 +51,7 @@ class Player {
   void moveLeft() {
     move();
     position.add(new PVector(-scale, 0));
-    if (collision && path.get(getPositionX(), floor(getPositionY() + (player.size.y/2))) == black) {
+    if (collision && path.get(getPositionX(), floor(getPositionY() + (playerSize.y/2))) == black) {
       position.x = previousPosition.x;
     }
   }
@@ -60,15 +59,18 @@ class Player {
   void moveRight() {
     move();
     position.add(new PVector(scale, 0));
-    if (collision && path.get(floor(getPositionX() + player.size.x), floor(getPositionY() + (player.size.y/2))) == black) {
+    if (collision && path.get(floor(getPositionX() + playerSize.x), floor(getPositionY() + (playerSize.y/2))) == black) {
       position.x = previousPosition.x;
     }
   }
 
   boolean canGoUp() {
+    if (!collision) {
+      return true;
+    }
     for (int i=0; i<stepCount; i++) {
       if (path.get(getPositionX(), floor(getPositionY()-i)) == black ||
-        path.get(floor(getPositionX() + player.size.x), floor(player.position.y-i)) == black) {
+        path.get(floor(getPositionX() + playerSize.x), floor(player.position.y-i)) == black) {
         return false;
       }
     }
@@ -76,9 +78,12 @@ class Player {
   }
 
   boolean canGoDown() {
+    if (!collision) {
+      return true;
+    }
     for (int i=0; i<stepCount; i++) {
-      if (path.get(getPositionX(), floor(getPositionY() + player.size.y + i)) == black ||
-        path.get(floor(getPositionX() + player.size.x), floor(getPositionY() + player.size.y + i)) == black) {
+      if (path.get(getPositionX(), floor(getPositionY() + playerSize.y + i)) == black ||
+        path.get(floor(getPositionX() + playerSize.x), floor(getPositionY() + playerSize.y + i)) == black) {
         return false;
       }
     }
@@ -86,9 +91,12 @@ class Player {
   }
 
   boolean canGoRight() {
+    if (!collision) {
+      return true;
+    }
     for (int i=0; i<stepCount; i++) {
-      if (path.get(floor(getPositionX() + player.size.x + i), getPositionY()) == black ||
-        path.get(floor(getPositionX() + player.size.x + i), floor(getPositionY() + player.size.y)) == black) {
+      if (path.get(floor(getPositionX() + playerSize.x + i), getPositionY()) == black ||
+        path.get(floor(getPositionX() + playerSize.x + i), floor(getPositionY() + playerSize.y)) == black) {
         return false;
       }
     }
@@ -96,9 +104,12 @@ class Player {
   }
 
   boolean canGoLeft() {
+    if (!collision) {
+      return true;
+    }
     for (int i=0; i<stepCount; i++) {
       if (path.get(floor(getPositionX() - i), getPositionY()) == black ||
-        path.get(floor(getPositionX() - i), floor(getPositionY() + player.size.y)) == black) {
+        path.get(floor(getPositionX() - i), floor(getPositionY() + playerSize.y)) == black) {
         return false;
       }
     }
@@ -107,8 +118,8 @@ class Player {
 
   void draw() {
     noStroke();
-    fill(238, 130, 238);
+    fill(0);
     rectMode(CORNER);
-    rect(position.x, position.y, size.x, size.y);
+    rect(position.x, position.y, playerSize.x, playerSize.y);
   }
 }
