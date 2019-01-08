@@ -1,7 +1,8 @@
 class Actions {
+  // List of actionable code blocks
   List<Block> blocks;
+  // Position of current execution in the blocks
   Pointer pointer;
-  Block previousBlock;
 
   PVector printScale;
 
@@ -12,17 +13,15 @@ class Actions {
     printScale = new PVector(10, 15);
   }
 
-  void clear() {
-    pointer = new Pointer();
-    blocks = new LinkedList<Block>();
-  }
-
-  void reloadActions(List<Block> codeTrain) {
+  /*
+   * If the actions blocks has fallen out of sync with the code train, the action blocks are rewritten
+   */
+  private void reloadActions(List<Block> codeTrain) {
     pointer = new Pointer();
     blocks = codeTrain;
   }
 
-  void update(List<Block> codeTrain) {
+  public void update() {
     List<Block> trainActions = convertToActions(codeTrain);
     if (trainActions.size() == 0) {
       blocks = trainActions;
@@ -47,15 +46,15 @@ class Actions {
     }
   }
 
-  List<Block> convertToActions(List<Block> codeTrain) {
+  private List<Block> convertToActions(List<Block> codeTrain) {
     return getSegment(new LinkedList(codeTrain), new LinkedList());
   }
 
-  List<Block> getSegment(List<Block> queue, List<Block> segment) {
+  private List<Block> getSegment(List<Block> queue, List<Block> segment) {
     if (queue.size() == 0) { // If queue is empty return segment
       return segment;
     }
-    Block first = queue.get(0);
+    Block first = queue.get(0); // Get the first element in the 
     if (first instanceof Query) {
       queue.remove(first);
       return getSegment(queue, segment);
@@ -79,16 +78,6 @@ class Actions {
     }
   }
 
-  void addBlock(Block block) {
-    blocks.add(block);
-  }
-
-  void addBlocks(Block... blocks) {
-    for (Block block : blocks) {
-      this.addBlock(block);
-    }
-  }
-
   void printActions(int x, int y) {
     textAlign(LEFT);
     pushMatrix();
@@ -104,14 +93,14 @@ class Actions {
     textAlign(CENTER, CENTER);
   }
 
-  public void drawBlocks() {
+  public void annotateTrain() {
     rectMode(CENTER);
     int[] fauxPointer = new int[1];
     fauxPointer[0] = 0;
-    drawBlocks(blocks, fauxPointer);
+    annotateTrain(blocks, fauxPointer);
   }
 
-  private void drawBlocks(List<Block> givenBlocks, int[] fPointer) {
+  private void annotateTrain(List<Block> givenBlocks, int[] fPointer) {
     for (Block block : givenBlocks) {
       pushMatrix();
       translate(block.position.x, block.position.y);
@@ -130,7 +119,7 @@ class Actions {
       popMatrix();
       if (block instanceof Iterable) {
         Iterable iterable = (Iterable) block;
-        drawBlocks(iterable.getSubBlocks(), append(fPointer, 0));
+        annotateTrain(iterable.getSubBlocks(), append(fPointer, 0));
       }
       fPointer[fPointer.length-1]++;
     }
@@ -170,7 +159,6 @@ class Actions {
       // Execute the block (if it's a movement move the user, if it's a loop, take the next step)
       boolean state = currentBlock.execute();
       if (state) {
-        previousBlock = currentBlock;
         pointer.increment();
       } else {
         if (currentBlock instanceof Iterable) {

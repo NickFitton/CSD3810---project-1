@@ -118,6 +118,13 @@ class Player {
 
   void draw() {
     noStroke();
+    fill(50, 50);
+    rectMode(CORNER);
+    for (PVector position : player.previousPositions) {
+      rect(position.x + (playerSize.y/4), position.y + (playerSize.y/4), playerSize.x/2, playerSize.y/2);
+    }
+
+    noStroke();
     fill(0);
     rectMode(CORNER);
     rect(position.x, position.y, playerSize.x, playerSize.y);
