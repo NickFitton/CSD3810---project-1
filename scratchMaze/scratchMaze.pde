@@ -48,10 +48,11 @@ void draw() {
     player.previousPositions.remove(0);
   }
   drawBackground();
+  actions.drawBlocks();
   for (Block b : currentBlocks) {
     b.drawBlock();
   }
-  drawCodeTrain(codeTrain);
+  //drawCodeTrain(codeTrain);
   drawPlayer();
   drawButtons();
 

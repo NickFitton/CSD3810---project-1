@@ -106,13 +106,17 @@ class OutDent extends Block {
 }
 
 abstract class Movement extends Block {
-  int movementPointer;
+  private int movementPointer;
   int steps;
 
   Movement(TuioObject obj) {
     super(obj);
     this.steps = stepCount;
     this.movementPointer = 0;
+  }
+
+  float getProgress() {
+    return movementPointer / float(steps);
   }
 
   List<Block> getSubBlocks() throws IOException {
@@ -124,13 +128,12 @@ abstract class Movement extends Block {
   boolean execute() {
     move();    
     movementPointer++;
-    if (movementPointer-1 < steps) {
+    if (movementPointer <= steps) {
       return false;
     } else {
       movementPointer = 0;
       return true;
     }
-    //return true;
   }
 }
 
