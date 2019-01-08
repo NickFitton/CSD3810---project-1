@@ -109,9 +109,9 @@ abstract class Movement extends Block {
   int movementPointer;
   int steps;
 
-  Movement(TuioObject obj, int steps) {
+  Movement(TuioObject obj) {
     super(obj);
-    this.steps = steps;
+    this.steps = stepCount;
     this.movementPointer = 0;
   }
 
@@ -136,7 +136,7 @@ abstract class Movement extends Block {
 
 class Up extends Movement {
   Up(TuioObject obj) {
-    super(obj, stepCount);
+    super(obj);
     action = "up";
   }
 
@@ -161,7 +161,7 @@ class Up extends Movement {
 
 class Down extends Movement {
   Down(TuioObject obj) {
-    super(obj, stepCount);
+    super(obj);
     action = "down";
   }
 
@@ -186,7 +186,7 @@ class Down extends Movement {
 
 class Right extends Movement {
   Right(TuioObject obj) {
-    super(obj, stepCount);
+    super(obj);
     action = "right";
   }
 
@@ -211,7 +211,7 @@ class Right extends Movement {
 
 class Left extends Movement {
   Left(TuioObject obj) {
-    super(obj, stepCount);
+    super(obj);
     action = "left";
   }
 

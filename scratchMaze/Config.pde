@@ -5,6 +5,6 @@ color black = color(0, 0, 0);
 int rectBorder = 8;
 
 PVector imagePosition = new PVector(100, 339);
-//PVector imagePosition = new PVector(64, 64);
+//PVector imagePosition = new PVector(0, 0);
 
 PVector screenScale = new PVector(1, 1);

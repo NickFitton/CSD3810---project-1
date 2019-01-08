@@ -11,11 +11,11 @@ abstract class Query extends Block {
   }
 
   boolean execute() {
-    boolean clear = pathClear(player.position.copy(), player.size, player.scale, path, stepCount);
+    boolean clear = pathClear(player.position.copy(), player.size, player.scale, path);
     return clear;
   }
 
-  abstract boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps);
+  abstract boolean pathClear(PVector position, PVector size, int scale, PImage path);
 
   void drawBlock() {
     runnableDraw(new Runnable() {
@@ -37,15 +37,8 @@ class CanGoUp extends Query {
     super(obj, "Can go up");
   }
 
-  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
-    println("path clear");
-    for (int i=0; i<steps; i++) {
-      if (path.get(floor(player.position.x), floor(player.position.y-i)) == black ||
-        path.get(floor(player.position.x + player.size.x), floor(player.position.y-i)) == black) {
-        return false;
-      }
-    }
-    return true;
+  boolean pathClear(PVector position, PVector size, int scale, PImage path) {
+    return player.canGoUp();
   }
 }
 
@@ -54,15 +47,8 @@ class CanGoDown extends Query {
     super(obj, "Can go down");
   }
 
-  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
-    println("path clear");
-    for (int i=0; i<steps; i++) {
-      if (path.get(floor(player.position.x), floor(player.position.y + player.size.y + i)) == black ||
-        path.get(floor(player.position.x + player.size.x), floor(player.position.y + player.size.y + i)) == black) {
-        return false;
-      }
-    }
-    return true;
+  boolean pathClear(PVector position, PVector size, int scale, PImage path) {
+    return player.canGoDown();
   }
 }
 
@@ -71,14 +57,8 @@ class CanGoRight extends Query {
     super(obj, "Can go right");
   }
 
-  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
-    for (int i=0; i<steps; i++) {
-      if (path.get(floor(player.position.x + player.size.x + i), floor(player.position.y)) == black ||
-        path.get(floor(player.position.x + player.size.x + i), floor(player.position.y + player.size.y)) == black) {
-        return false;
-      }
-    }
-    return true;
+  boolean pathClear(PVector position, PVector size, int scale, PImage path) {
+    return player.canGoRight();
   }
 }
 
@@ -87,14 +67,8 @@ class CanGoLeft extends Query {
     super(obj, "Can go left");
   }
 
-  boolean pathClear(PVector position, PVector size, int scale, PImage path, int steps) {
-    for (int i=0; i<steps; i++) {
-      if (path.get(floor(player.position.x - i), floor(player.position.y)) == black ||
-        path.get(floor(player.position.x - i), floor(player.position.y + player.size.y)) == black) {
-        return false;
-      }
-    }
-    return true;
+  boolean pathClear(PVector position, PVector size, int scale, PImage path) {
+    return player.canGoLeft();
   }
 }
 

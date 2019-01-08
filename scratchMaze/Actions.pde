@@ -140,11 +140,6 @@ class Actions {
     try {
       // Grab the block currently pointed at
       Block currentBlock = pointer.point(blocks);
-      if (currentBlock instanceof Iterable) {
-        println("fucking why?");
-      } else {
-        println(currentBlock.action);
-      }
       // Execute the block (if it's a movement move the user, if it's a loop, take the next step)
       boolean state = currentBlock.execute();
       if (state) {

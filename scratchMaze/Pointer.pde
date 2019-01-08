@@ -50,15 +50,6 @@ class Pointer {
     }
   }
 
-  void printPointer(int[] pointer) {
-    if (pointer.length == 0) {
-      println();
-    } else {
-      print(pointer[0] + ", ");
-      printPointer(shorten(pointer));
-    }
-  }
-
   Block point(List<Block> blocks) throws IOException {
     return getBlock(blocks, pointer);
   }

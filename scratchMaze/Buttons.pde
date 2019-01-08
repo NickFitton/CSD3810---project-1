@@ -81,7 +81,7 @@ class ResetButton extends Button {
 
   void pressed() {
     playPauseButton.setPlaying(false);
-    player = new Player(new PVector(215, 215));
+    player = new Player(new PVector(5 + imagePosition.x, 5 + imagePosition.y));
     actions.pointer.reset();
   }
 }

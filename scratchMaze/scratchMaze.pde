@@ -14,7 +14,7 @@ ResetButton resetButton;
 void setup() {
   textAlign(CENTER, CENTER);
   size(1560, 1000);
-  //size(800, 450);
+  //size(780, 500);
   smooth();
   frameRate(60);
   path = loadImage("newPath.png");
@@ -50,34 +50,30 @@ void draw() {
     b.drawBlock();
   }
   drawCodeTrain(codeTrain);
-  //actions.printActions(width - 150, 25);
   drawPlayer();
   drawButtons();
 
   for (Cursor c : cursors.values()) {
     c.draw();
   }
-  
+
   Optional<TriggerBlock> b = getTriggerBlock();
   if (b.isPresent()) {
     TriggerBlock trigger = b.get();
 
     if (playPauseButton.inButton(trigger.position)) {
-      println("In button");
       playPauseButton.setPlaying(true);
     } else {
-      println("Not in button");
       playPauseButton.setPlaying(false);
     }
     if (resetButton.inButton(trigger.position)) {
-      println("Resetting");
       resetButton.pressed();
     }
   }
 }
-  
+
 Optional<TriggerBlock> getTriggerBlock() {
-  for (Block b: blocks.values()) {
+  for (Block b : blocks.values()) {
     if (b instanceof TriggerBlock) {
       return Optional.of((TriggerBlock) b);
     }
@@ -121,7 +117,6 @@ void updateCodeTrain(List<Block> elements) {
   } else {
     codeTrain = new LinkedList();
   }
-  //println(codeTrain);
 }
 
 /**

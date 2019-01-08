@@ -3,6 +3,10 @@ class Player {
   PVector previousPosition;
   PVector size = new PVector(5, 5);
   int scale;
+  CanGoUp up;
+  CanGoDown down;
+  CanGoLeft left;
+  CanGoRight right;
   LinkedList<PVector> previousPositions;
 
   Player(PVector position) {
@@ -20,11 +24,11 @@ class Player {
     previousPosition = position.copy();
     previousPositions.add(position.copy());
   }
-  
+
   int getPositionX() {
     return floor(player.position.x - imagePosition.x);
   }
-  
+
   int getPositionY() {
     return floor(player.position.y - imagePosition.y);
   }
@@ -36,7 +40,6 @@ class Player {
       position.y = previousPosition.y;
     }
     if (previousPositions.size() > 10) {
-      println("removing");
       previousPositions.remove(0);
     }
   }
@@ -65,18 +68,44 @@ class Player {
     }
   }
 
-  void collide(PImage path) {
-    boolean touchUp = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y)) == black;
-    boolean touchRight = path.get(floor(player.position.x + player.size.x), floor(player.position.y + (player.size.y/2))) == black; 
-    boolean touchDown = path.get(floor(player.position.x + (player.size.x/2)), floor(player.position.y + player.size.y)) == black; 
-    boolean touchLeft = path.get(floor(player.position.x), floor(player.position.y + (player.size.y/2))) == black; 
+  boolean canGoUp() {
+    for (int i=0; i<stepCount; i++) {
+      if (path.get(getPositionX(), floor(getPositionY()-i)) == black ||
+        path.get(floor(getPositionX() + player.size.x), floor(player.position.y-i)) == black) {
+        return false;
+      }
+    }
+    return true;
+  }
 
-    if (touchRight || touchLeft ) {
-      position.x = previousPosition.x;
+  boolean canGoDown() {
+    for (int i=0; i<stepCount; i++) {
+      if (path.get(getPositionX(), floor(getPositionY() + player.size.y + i)) == black ||
+        path.get(floor(getPositionX() + player.size.x), floor(getPositionY() + player.size.y + i)) == black) {
+        return false;
+      }
     }
-    if (touchUp || touchDown ) {
-      position.y = previousPosition.y;
+    return true;
+  }
+
+  boolean canGoRight() {
+    for (int i=0; i<stepCount; i++) {
+      if (path.get(floor(getPositionX() + player.size.x + i), getPositionY()) == black ||
+        path.get(floor(getPositionX() + player.size.x + i), floor(getPositionY() + player.size.y)) == black) {
+        return false;
+      }
     }
+    return true;
+  }
+
+  boolean canGoLeft() {
+    for (int i=0; i<stepCount; i++) {
+      if (path.get(floor(getPositionX() - i), getPositionY()) == black ||
+        path.get(floor(getPositionX() - i), floor(getPositionY() + player.size.y)) == black) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void draw() {
