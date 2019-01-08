@@ -366,6 +366,9 @@ class If extends Conditional {
 
   @Override()
     boolean execute() {
+    if (!hasQuery()) {
+      return true;
+    }
     if (beenExecuted) {
       beenExecuted = false;
       return true;

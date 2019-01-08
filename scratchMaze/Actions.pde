@@ -50,29 +50,31 @@ class Actions {
     return getSegment(new LinkedList(codeTrain), new LinkedList());
   }
 
-  private List<Block> getSegment(List<Block> queue, List<Block> segment) {
+  /*
+   * Returns the next segment in the given queue.
+   * The function is recursive, so if there is a segment in a segment e.g. a for loop in an if statement, this is accounted for.
+   * The function also side affects, so when a queue is given, this should be taken into account (see 'convertToActions').
+   */
+  private List<Block> getSegment(LinkedList<Block> queue, List<Block> segment) {
     if (queue.size() == 0) { // If queue is empty return segment
       return segment;
     }
-    Block first = queue.get(0); // Get the first element in the 
+    Block first = queue.get(0); // Get the first element in the queue
+    queue.remove(first);
     if (first instanceof Query) {
-      queue.remove(first);
       return getSegment(queue, segment);
     } else if (first instanceof Iterable) { // If the first element of the queue is an iterable
-      queue.remove(first);
       Iterable iterableFirst = ((Iterable) first);
+      // Get the elements of the iterable and add the created segment to the current segment
       List<Block> innerBlocks = getSegment(queue, new LinkedList());
       iterableFirst.setBlocks(innerBlocks);
       segment.add(iterableFirst);
-      if (queue.size() != 0) {
-        segment.add(queue.get(0));
-        queue.remove(queue.get(0));
-      }
       return getSegment(queue, segment);
     } else if (first instanceof OutDent) {
+      // Finish reading if an outdent is reached
+      segment.add(first);
       return segment;
     } else {
-      queue.remove(first);
       segment.add(first);
       return getSegment(queue, segment);
     }
@@ -85,6 +87,7 @@ class Actions {
     fill(0);
     stroke(0);
     pushMatrix();
+    // The faux pointer is used to text which block is active to highlight it
     int[] fauxPointer = new int[1];
     fauxPointer[0] = 0;
     printBlocks(blocks, fauxPointer);
@@ -95,6 +98,7 @@ class Actions {
 
   public void annotateTrain() {
     rectMode(CENTER);
+    // The faux pointer is used to text which block is active to highlight it
     int[] fauxPointer = new int[1];
     fauxPointer[0] = 0;
     annotateTrain(blocks, fauxPointer);
@@ -106,21 +110,27 @@ class Actions {
       translate(block.position.x, block.position.y);
       rotate(block.rotation);
       float blockSize = block.size + 15;
+      // If the current 'block' in the loop is the running one, highlight it
       if (pointer.equals(fPointer)) {
         fill(0, 255, 0, 100);
+        // If the running block is a movement block, change the size of the block depending on the current progress of that movement
         if (block instanceof Movement) {
           Movement m = (Movement) block;
           blockSize += sin(m.getProgress() * PI) * 10;
         }
       } else {
+        // If the current 'block' in the loop is not running, give it a different highlight
         fill(0, 0, 255, 100);
       }
+      // Print the blocks highlight
       rect(0, 0, blockSize, blockSize, rectBorder);
       popMatrix();
       if (block instanceof Iterable) {
         Iterable iterable = (Iterable) block;
+        // Recurse into the sub blocks, appending to the pointer to factor
         annotateTrain(iterable.getSubBlocks(), append(fPointer, 0));
       }
+      // Step the pointer to the next point
       fPointer[fPointer.length-1]++;
     }
   }
