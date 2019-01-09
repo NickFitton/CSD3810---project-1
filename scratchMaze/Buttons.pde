@@ -53,6 +53,11 @@ class PlayPauseButton extends Button {
   }
 
   void setPlaying(boolean state) {
+    if (state) {
+      println("playing");
+    } else {
+      println("pausing"); //<>//
+    }
     playing = state;
     setColor(state);
   }
@@ -80,6 +85,7 @@ class ResetButton extends Button {
   }
 
   void pressed() {
+    println("reset");
     playPauseButton.setPlaying(false);
     player = new Player(new PVector(5 + imagePosition.x, 5 + imagePosition.y));
     actions.pointer.reset();

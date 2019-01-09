@@ -106,7 +106,7 @@ class OutDent extends Block {
 }
 
 abstract class Movement extends Block {
-  private int movementPointer;
+  protected int movementPointer;
   int steps;
 
   Movement(TuioObject obj) {

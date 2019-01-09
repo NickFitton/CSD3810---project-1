@@ -35,9 +35,11 @@ void draw() {
   ///////////////////////
   //// FUNCTIONALITY ////
   ///////////////////////
-  
-  // Retrieve the current list of blocks provided by TUIO
-  List<Block> currentBlocks = new LinkedList<Block>(blocks.values());
+  List<Block> currentBlocks;
+  synchronized(blocks) {
+    // Retrieve the current list of blocks provided by TUIO
+    currentBlocks = new LinkedList<Block>(blocks.values());
+  }
   // If a the list of elements has changed since the last frame
   if (tuioUpdated) {
     // Update the code train to reflect new positions
@@ -76,22 +78,21 @@ void draw() {
       }
       triggerOnPlay = true;
     } else {
-      playPauseButton.setPlaying(false);
       triggerOnPlay = false;
     }
     if (resetButton.inButton(trigger.position)) {
       resetButton.pressed();
     }
   }
-  
+
   ///////////////////////
   /////// DRAWING ///////
   ///////////////////////
   drawBackground();
-  
+
   // Draws the shading around the blocks in the train first so that everything else is drawn over them
   actions.annotateTrain();
-  
+
   // Draw all of the blocks supplied by TUIO, event if they're not part of the train, the user may want to see them
   for (Block b : currentBlocks) {
     b.drawBlock();

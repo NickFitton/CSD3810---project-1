@@ -15,31 +15,32 @@ Block createBlock(TuioObject obj) {
   case 0:
     return new Start(obj);
   case 1:
+  case 14:
     return new OutDent(obj);
   case 2:
+  case 15:
     return new Up(obj);
   case 3:
     return new Down(obj);
   case 4:
     return new Left(obj);
-  case 5:
+  case 16:
     return new Right(obj);
-  case 6:
+  case 5:
     return new ForLoop(obj, 5);
-  case 7:
+  case 17:
     return new InfiniteLoop(obj);
-  case 8:
+  case 6:
     return new If(obj);
-  case 9:
+  case 18:
     return new CanGoUp(obj);
-  case 10:
+  case 7:
     return new CanGoDown(obj);
-  case 11:
+  case 19:
     return new CanGoLeft(obj);
   case 12:
     return new CanGoRight(obj);
   case 13:
-  case 16:
     return new TriggerBlock(obj);
   default:
     return new Up(obj);
